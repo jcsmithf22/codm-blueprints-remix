@@ -57,6 +57,8 @@ export default function Nav({
               <img
                 className="h-8 w-auto"
                 src="https://tailwindui.com/img/logos/mark.svg?color=blue&shade=500"
+                width={38}
+                height={32}
                 alt="Your Company"
               />
             </div>

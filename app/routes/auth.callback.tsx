@@ -1,8 +1,8 @@
-import { redirect } from "@remix-run/node";
+import { redirect } from "@vercel/remix";
 import { createServerClient } from "@supabase/auth-helpers-remix";
 
 import type { Database } from "~/types/supabase";
-import type { LoaderFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@vercel/remix";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const response = new Response();

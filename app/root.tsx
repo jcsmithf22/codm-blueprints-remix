@@ -3,7 +3,7 @@ import {
   json,
   type LinksFunction,
   type LoaderFunctionArgs,
-} from "@remix-run/node";
+} from "@vercel/remix";
 import {
   Links,
   LiveReload,

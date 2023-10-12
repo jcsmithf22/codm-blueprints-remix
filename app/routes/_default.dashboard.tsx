@@ -1,7 +1,7 @@
 import { Await, Outlet, useLoaderData } from "@remix-run/react";
 import DashboardNavigation from "~/components/navigation/DashboardNavigation";
 import type { Database, Json } from "~/types/supabase";
-import { type LoaderFunctionArgs, defer } from "@remix-run/node";
+import { type LoaderFunctionArgs, defer } from "@vercel/remix";
 import { getItems, getAttachments } from "~/lib/api";
 import { getSession } from "~/session";
 import { Suspense } from "react";

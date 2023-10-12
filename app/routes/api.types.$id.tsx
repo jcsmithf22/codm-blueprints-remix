@@ -1,4 +1,4 @@
-import { json, type LoaderFunctionArgs } from "@remix-run/node";
+import { json, type LoaderFunctionArgs } from "@vercel/remix";
 import { getItem } from "~/lib/api";
 import { getProtectedSession } from "~/session";
 import type { Type } from "./_default.dashboard";

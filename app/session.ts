@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/auth-helpers-remix";
 import type { Database } from "./types/supabase";
-import { redirect } from "@remix-run/node";
+import { redirect } from "@vercel/remix";
 
 export async function getSession(request: Request) {
   const response = new Response();

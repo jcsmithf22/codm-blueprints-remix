@@ -16,7 +16,7 @@ import {
 } from "~/components/ui/table";
 import { Separator } from "~/components/ui/separator";
 
-interface DataTableProps<TData, TValue> {
+export interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
@@ -89,4 +89,9 @@ function DataTable<TData, TValue>({
 // export default React.memo(DataTable) as <TData, TValue>(
 //   props: DataTableProps<TData, TValue>
 // ) => JSX.Element;
+// export type Component = typeof DataTable;
 export default React.memo(DataTable) as typeof DataTable;
+// console.log(typeof DataTable);
+
+// const MemoizedDataTable = React.memo(DataTable) as typeof DataTable;
+// const LazyLoaded = React.lazy(() => import("./DataTable"));

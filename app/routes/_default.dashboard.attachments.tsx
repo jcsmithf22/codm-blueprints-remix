@@ -7,43 +7,64 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "~/components/ui/sheet";
 import { useFetcher, useOutletContext } from "@remix-run/react";
 import type { Attachment } from "./_default.dashboard";
-import DataTable from "~/components/table/DataTable";
+// import DataTable from "~/components/table/DataTable";
 import { AttachmentColumns } from "~/components/table/columns";
 import type { Database } from "~/types/supabase";
 
+// type DataTableType = <TData, TValue>({ columns, data, }: DataTableProps<TData, TValue>) => JSX.Element
+
+// import { sidebarAtom } from "~/lib/atoms";
+import { atom, useSetAtom } from "jotai";
+import Sidebar from "~/components/editor/Sidebar";
+import type { DataTableProps } from "~/components/table/DataTable";
+
+// Testing lazy load
+
+type DataTableType = <TData, TValue>({
+  columns,
+  data,
+}: DataTableProps<TData, TValue>) => JSX.Element;
+
+const DataTable = React.lazy(
+  () => import("~/components/table/DataTable")
+) as DataTableType;
+
 export type SingleAttachment =
   Database["public"]["Tables"]["attachments"]["Row"];
+
+const editorOpenAtom = atom(false);
+const insertOpenAtom = atom(false);
 
 export default function Page() {
   const { attachments } = useOutletContext<{
     attachments: Array<Attachment>;
   }>();
 
+  const setOpen = useSetAtom(editorOpenAtom);
+
   const fetcher = useFetcher<{ data: SingleAttachment }>();
   const fetcherRef = React.useRef(fetcher);
 
-  const [editorOpen, setEditorOpen] = React.useState(false);
+  // const [editorOpen, setEditorOpen] = React.useState(false);
 
-  const editorFunction = React.useCallback(async (id: number) => {
-    console.log(id);
-    fetcherRef.current.load(`/dashboard/attachments/${id}`);
-    setEditorOpen(true);
-  }, []);
+  const editorFunction = React.useCallback(
+    async (id: number) => {
+      console.log(id);
+      fetcherRef.current.load(`/api/attachments/${id}`);
+      setOpen(true);
+      // setEditorOpen(true);
+    },
+    [setOpen]
+  );
 
   const columns = React.useMemo(
     () => AttachmentColumns(editorFunction),
     [editorFunction]
   );
+
+  console.log("attachment-dashboard-reload");
 
   return (
     <>
@@ -87,8 +108,11 @@ export default function Page() {
           </DropdownMenuContent>
         </DropdownMenu>
         <Separator orientation="vertical" className="h-6 mx-1" />
-        <Sheet>
-          <SheetTrigger asChild>
+        <Sidebar
+          atom={insertOpenAtom}
+          title="Attachment Editor"
+          description="Add a new gun attachment to the database."
+          trigger={
             <Button
               variant="default"
               size="sm"
@@ -96,33 +120,23 @@ export default function Page() {
             >
               Insert
             </Button>
-          </SheetTrigger>
-          <SheetContent className="sm:max-w-lg">
-            <SheetHeader>
-              <SheetTitle>Model Editor</SheetTitle>
-              <SheetDescription>
-                Upload a new gun model to the database.
-              </SheetDescription>
-            </SheetHeader>
-          </SheetContent>
-        </Sheet>
+          }
+        >
+          This is where we create new stuff
+        </Sidebar>
       </div>
       <div className="pt-10">
         <DataTable columns={columns} data={attachments} />
       </div>
-      <Sheet open={editorOpen} onOpenChange={setEditorOpen}>
-        <SheetContent className="sm:max-w-lg">
-          <SheetHeader>
-            <SheetTitle>Model Editor</SheetTitle>
-            <SheetDescription>
-              Upload a new gun model to the database.
-              {fetcher.state === "idle" && (
-                <>{JSON.stringify(fetcher.data?.data)}</>
-              )}
-            </SheetDescription>
-          </SheetHeader>
-        </SheetContent>
-      </Sheet>
+      <Sidebar
+        atom={editorOpenAtom}
+        title="Attachment Editor"
+        description="Edit an existing gun attachment."
+      >
+        {fetcher.state === "idle" && fetcher.data && (
+          <>{JSON.stringify(fetcher.data.data)}</>
+        )}
+      </Sidebar>
     </>
   );
 }

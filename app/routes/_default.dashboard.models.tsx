@@ -44,7 +44,7 @@ export default function Page() {
 
   const editorFunction = React.useCallback(async (id: number) => {
     console.log(id);
-    fetcherRef.current.load(`/dashboard/models/${id}`);
+    fetcherRef.current.load(`/api/models/${id}`);
     setEditorOpen(true);
   }, []);
 
@@ -54,7 +54,7 @@ export default function Page() {
   );
 
   return (
-    <div>
+    <>
       <div className="border-b border-b-200 bg-white fixed top-14 left-0 md:left-64 right-0 h-10 flex gap-x-2 items-center px-4 text-gray-700 z-30">
         <Button
           variant="ghost"
@@ -131,6 +131,6 @@ export default function Page() {
           </SheetHeader>
         </SheetContent>
       </Sheet>
-    </div>
+    </>
   );
 }

@@ -3,7 +3,7 @@ import DashboardNavigation from "~/components/navigation/DashboardNavigation";
 import type { Database, Json } from "~/types/supabase";
 import { type LoaderFunctionArgs, defer } from "@remix-run/node";
 import { getItems, getAttachments } from "~/lib/api";
-import { getProtectedSession } from "~/session";
+import { getSession } from "~/session";
 import { Suspense } from "react";
 
 export type Model = Database["public"]["Tables"]["models"]["Row"];
@@ -22,7 +22,7 @@ export type Attachment = {
 };
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { supabase, response } = await getProtectedSession(request);
+  const { supabase, response } = await getSession(request);
 
   const models = getItems<Model>(supabase, "models");
   const attachments = getAttachments(supabase);

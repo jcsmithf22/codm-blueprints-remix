@@ -16,7 +16,7 @@ import {
 } from "~/components/ui/table";
 import { Separator } from "~/components/ui/separator";
 
-export interface DataTableProps<TData, TValue> {
+interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }

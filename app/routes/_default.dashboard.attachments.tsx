@@ -9,27 +9,11 @@ import {
 } from "~/components/ui/dropdown-menu";
 import { useFetcher, useOutletContext } from "@remix-run/react";
 import type { Attachment } from "./_default.dashboard";
-// import DataTable from "~/components/table/DataTable";
+import DataTable from "~/components/table/DataTable";
 import { AttachmentColumns } from "~/components/table/columns";
 import type { Database } from "~/types/supabase";
-
-// type DataTableType = <TData, TValue>({ columns, data, }: DataTableProps<TData, TValue>) => JSX.Element
-
-// import { sidebarAtom } from "~/lib/atoms";
 import { atom, useSetAtom } from "jotai";
 import Sidebar from "~/components/editor/Sidebar";
-import type { DataTableProps } from "~/components/table/DataTable";
-
-// Testing lazy load
-
-type DataTableType = <TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) => JSX.Element;
-
-const DataTable = React.lazy(
-  () => import("~/components/table/DataTable")
-) as DataTableType;
 
 export type SingleAttachment =
   Database["public"]["Tables"]["attachments"]["Row"];

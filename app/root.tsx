@@ -21,6 +21,8 @@ import React from "react";
 import styles from "./tailwind.css";
 import { getSession } from "./session";
 
+export const config = { runtime: "edge" };
+
 export const links: LinksFunction = () => [
   // ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
   { rel: "stylesheet", href: styles },

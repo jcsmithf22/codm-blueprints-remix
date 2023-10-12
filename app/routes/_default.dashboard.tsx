@@ -45,7 +45,7 @@ export default function Layout() {
         </div>
       </div>
 
-      <div className="relative w-full overflow-scroll pl-64 pt-14 h-screen">
+      <div className="relative w-full md:pl-64 pt-14">
         <Suspense
           fallback={<div className="w-full h-full bg-white">Loading...</div>}
         >

@@ -1,3 +1,4 @@
+import React from "react";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { Filter, RefreshCw, List } from "lucide-react";
@@ -14,16 +15,39 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "~/components/ui/sheet";
-import { useOutletContext } from "@remix-run/react";
+import { useFetcher, useOutletContext } from "@remix-run/react";
 import type { Attachment } from "./_default.dashboard";
+import DataTable from "~/components/table/DataTable";
+import { AttachmentColumns } from "~/components/table/columns";
+import type { Database } from "~/types/supabase";
+
+export type SingleAttachment =
+  Database["public"]["Tables"]["attachments"]["Row"];
 
 export default function Page() {
   const { attachments } = useOutletContext<{
     attachments: Array<Attachment>;
   }>();
+
+  const fetcher = useFetcher<{ data: SingleAttachment }>();
+  const fetcherRef = React.useRef(fetcher);
+
+  const [editorOpen, setEditorOpen] = React.useState(false);
+
+  const editorFunction = React.useCallback(async (id: number) => {
+    console.log(id);
+    fetcherRef.current.load(`/dashboard/attachments/${id}`);
+    setEditorOpen(true);
+  }, []);
+
+  const columns = React.useMemo(
+    () => AttachmentColumns(editorFunction),
+    [editorFunction]
+  );
+
   return (
-    <div>
-      <div className="border-b border-b-200 bg-white fixed top-14 left-0 md:left-64 right-0 h-10 flex gap-x-2 items-center px-4 text-gray-700">
+    <>
+      <div className="border-b border-b-200 bg-white fixed top-14 left-0 md:left-64 right-0 h-10 flex gap-x-2 items-center px-4 text-gray-700 z-30">
         <Button
           variant="ghost"
           size="sm"
@@ -84,11 +108,21 @@ export default function Page() {
         </Sheet>
       </div>
       <div className="pt-10">
-        <h1>Attachments</h1>
-        {attachments.map((attachment) => (
-          <p key={attachment.id}>{attachment.attachment_names?.name}</p>
-        ))}
+        <DataTable columns={columns} data={attachments} />
       </div>
-    </div>
+      <Sheet open={editorOpen} onOpenChange={setEditorOpen}>
+        <SheetContent className="sm:max-w-lg">
+          <SheetHeader>
+            <SheetTitle>Model Editor</SheetTitle>
+            <SheetDescription>
+              Upload a new gun model to the database.
+              {fetcher.state === "idle" && (
+                <>{JSON.stringify(fetcher.data?.data)}</>
+              )}
+            </SheetDescription>
+          </SheetHeader>
+        </SheetContent>
+      </Sheet>
+    </>
   );
 }

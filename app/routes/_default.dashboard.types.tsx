@@ -1,3 +1,4 @@
+import React from "react";
 import { Button } from "~/components/ui/button";
 import { Separator } from "~/components/ui/separator";
 import { Filter, RefreshCw, List } from "lucide-react";
@@ -14,16 +15,35 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "~/components/ui/sheet";
-import { useOutletContext } from "@remix-run/react";
+import { useFetcher, useOutletContext } from "@remix-run/react";
 import type { Type } from "./_default.dashboard";
+import DataTable from "~/components/table/DataTable";
+import { TypeColumns } from "~/components/table/columns";
 
 export default function Page() {
   const { types } = useOutletContext<{
     types: Array<Type>;
   }>();
+
+  const fetcher = useFetcher<{ data: Type }>();
+  const fetcherRef = React.useRef(fetcher);
+
+  const [editorOpen, setEditorOpen] = React.useState(false);
+
+  const editorFunction = React.useCallback(async (id: number) => {
+    console.log(id);
+    fetcherRef.current.load(`/dashboard/types/${id}`);
+    setEditorOpen(true);
+  }, []);
+
+  const columns = React.useMemo(
+    () => TypeColumns(editorFunction),
+    [editorFunction]
+  );
+
   return (
     <div>
-      <div className="border-b border-b-200 bg-white fixed top-14 left-0 md:left-64 right-0 h-10 flex gap-x-2 items-center px-4 text-gray-700">
+      <div className="border-b border-b-200 bg-white fixed top-14 left-0 md:left-64 right-0 h-10 flex gap-x-2 items-center px-4 text-gray-700 z-30">
         <Button
           variant="ghost"
           size="sm"
@@ -84,11 +104,21 @@ export default function Page() {
         </Sheet>
       </div>
       <div className="pt-10">
-        <h1>Types</h1>
-        {types.map((type) => (
-          <p key={type.id}>{type.name}</p>
-        ))}
+        <DataTable columns={columns} data={types} />
       </div>
+      <Sheet open={editorOpen} onOpenChange={setEditorOpen}>
+        <SheetContent className="sm:max-w-lg">
+          <SheetHeader>
+            <SheetTitle>Type Editor</SheetTitle>
+            <SheetDescription>
+              Edit an existing gun attachment type.
+              {fetcher.state === "idle" && (
+                <>{JSON.stringify(fetcher.data?.data)}</>
+              )}
+            </SheetDescription>
+          </SheetHeader>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

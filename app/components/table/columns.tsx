@@ -15,16 +15,18 @@ type Characteristics = {
 };
 
 export const ModelColumns = (
-  editorFunction: () => void,
+  openEditor: () => void,
   setItemId: (args_0: SetStateAction<number | null>) => void
 ) => {
   const columns: ColumnDef<ModelAttachment>[] = [
     {
       accessorKey: "name",
+      id: "name",
       header: "Name",
     },
     {
       accessorKey: "type",
+      id: "type",
       header: "Type",
     },
     {
@@ -40,7 +42,7 @@ export const ModelColumns = (
           <button
             onClick={() => {
               setItemId(props.getValue() as number);
-              editorFunction();
+              openEditor();
             }}
           >
             Edit
@@ -53,16 +55,18 @@ export const ModelColumns = (
 };
 
 export const TypeColumns = (
-  editorFunction: () => void,
+  openEditor: () => void,
   setItemId: (args_0: SetStateAction<number | null>) => void
 ) => {
   const columns: ColumnDef<Type>[] = [
     {
       accessorKey: "name",
+      id: "name",
       header: "Name",
     },
     {
       accessorKey: "type",
+      id: "type",
       header: "Type",
     },
     {
@@ -73,7 +77,7 @@ export const TypeColumns = (
           <button
             onClick={() => {
               setItemId(props.getValue() as number);
-              editorFunction();
+              openEditor();
             }}
           >
             Edit
@@ -88,21 +92,24 @@ export const TypeColumns = (
 // Make attachment columns more efficient, probably by storing the data as a string
 
 export const AttachmentColumns = (
-  editorFunction: () => void,
+  openEditor: () => void,
   setItemId: (args_0: SetStateAction<number | null>) => void
 ) => {
   const columns: ColumnDef<Attachment>[] = [
     {
       accessorKey: "attachment_names.name",
       header: "Name",
+      id: "name",
     },
     {
       accessorKey: "attachment_names.type",
       header: "Type",
+      id: "type",
     },
     {
       accessorKey: "models.name",
       header: "Model",
+      id: "model",
     },
     {
       accessorFn: (row) => JSON.stringify(row.characteristics),
@@ -164,7 +171,7 @@ export const AttachmentColumns = (
           <button
             onClick={() => {
               setItemId(props.getValue() as number);
-              editorFunction();
+              openEditor();
             }}
           >
             Edit

@@ -1,8 +1,9 @@
-import { Outlet, useLocation, useOutletContext } from "@remix-run/react";
-import type { Session, SupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "~/types/supabase";
 import Nav from "~/components/navigation/Nav";
 
+import { Outlet, useLocation, useOutletContext } from "@remix-run/react";
+
+import type { Session, SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "~/types/supabase";
 export default function Layout() {
   const { supabase, session } = useOutletContext<{
     supabase: SupabaseClient<Database>;

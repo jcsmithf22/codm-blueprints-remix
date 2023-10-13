@@ -1,22 +1,22 @@
-import React from "react";
-import { Button } from "~/components/ui/button";
-import { Separator } from "~/components/ui/separator";
-import { Filter, RefreshCw, List } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "~/components/ui/dropdown-menu";
-import { useOutletContext } from "@remix-run/react";
-import type { Attachment, Model } from "./_default.dashboard";
-import DataTable from "~/components/table/DataTable";
-import { ModelColumns } from "~/components/table/columns";
-import Sidebar from "~/components/editor/Sidebar";
 import { atom, useAtom, useSetAtom } from "jotai";
+import React from "react";
+import ModelEditor from "~/components/editor/ModelEditor";
+import Sidebar from "~/components/editor/Sidebar";
+import { ModelColumns } from "~/components/table/columns";
+import Controls from "~/components/table/Controls";
+import DataTable from "~/components/table/DataTable";
 
-const editorOpenAtom = atom(false);
-const insertOpenAtom = atom(false);
-export const editorItemIdAtom = atom<number | null>(null);
+import { useOutletContext } from "@remix-run/react";
+
+import type { Sort } from "~/lib/types";
+import type { Attachment, Model } from "./_default.dashboard";
+
+const updateAtom = atom(false);
+const insertAtom = atom(false);
+export const itemIdAtom = atom<number | null>(null);
+
+const sortingAtom = atom<Array<Sort>>([]);
+const sortableColumns = ["name", "type", "attachments"];
 
 export default function Page() {
   const { models, attachments } = useOutletContext<{
@@ -24,8 +24,8 @@ export default function Page() {
     attachments: Array<Attachment>;
   }>();
 
-  const setOpen = useSetAtom(editorOpenAtom);
-  const [itemId, setItemId] = useAtom(editorItemIdAtom);
+  const setOpen = useSetAtom(updateAtom);
+  const [itemId, setItemId] = useAtom(itemIdAtom);
 
   const data = React.useMemo(
     () =>
@@ -38,82 +38,42 @@ export default function Page() {
     [attachments, models]
   );
 
-  const editorFunction = React.useCallback(() => setOpen(true), [setOpen]);
+  const openEditor = React.useCallback(() => setOpen(true), [setOpen]);
 
   const columns = React.useMemo(
-    () => ModelColumns(editorFunction, setItemId),
-    [editorFunction, setItemId]
+    () => ModelColumns(openEditor, setItemId),
+    [openEditor, setItemId]
   );
+
+  console.log("page rendered");
 
   return (
     <>
-      <div className="border-b border-b-200 bg-white fixed top-14 left-0 md:left-64 right-0 h-10 flex gap-x-2 items-center px-4 text-gray-700 z-30">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="h-6 font-normal flex gap-x-2 text-xs"
-        >
-          <RefreshCw className="h-3.5 w-3.5 text-gray-500" />
-          Refresh
-        </Button>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 font-normal flex gap-x-2 text-xs"
-            >
-              <Filter className="h-3.5 w-3.5 text-gray-500" />
-              Filter
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-64">
-            Filters
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 font-normal flex gap-x-2 text-xs"
-            >
-              <List className="h-3.5 w-3.5 text-gray-500" />
-              Sort
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-64">
-            Sort
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <Separator orientation="vertical" className="h-6 mx-1" />
-        <Sidebar
-          atom={insertOpenAtom}
-          title="Model Editor"
-          description="Add a new gun model to the database."
-          trigger={
-            <Button
-              variant="default"
-              size="sm"
-              className="h-6 font-normal flex gap-x-2 text-xs"
-            >
-              Insert
-            </Button>
-          }
-        >
-          This is where we create new stuff
-        </Sidebar>
-      </div>
+      <Controls
+        insertAtom={insertAtom}
+        sortableColumns={sortableColumns}
+        sortingAtom={sortingAtom}
+      />
       <div className="pt-10">
-        <DataTable columns={columns} data={data} />
+        <DataTable sortingAtom={sortingAtom} columns={columns} data={data} />
       </div>
       <Sidebar
-        atom={editorOpenAtom}
+        state={insertAtom}
+        title="Model Editor"
+        description="Add a new gun model to the database."
+      >
+        <ModelEditor />
+      </Sidebar>
+      <Sidebar
+        state={updateAtom}
         title="Model Editor"
         description="Edit an existing gun model."
       >
         {itemId && (
-          <>{JSON.stringify(models.find((model) => model.id === itemId))}</>
+          <ModelEditor
+            id={itemId}
+            model={models.find((model) => model.id === itemId)}
+          />
         )}
       </Sidebar>
     </>

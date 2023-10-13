@@ -1,10 +1,5 @@
 // import { cssBundleHref } from "@remix-run/css-bundle";
 import {
-  json,
-  type LinksFunction,
-  type LoaderFunctionArgs,
-} from "@vercel/remix";
-import {
   Links,
   LiveReload,
   Meta,
@@ -15,11 +10,16 @@ import {
   useRevalidator,
 } from "@remix-run/react";
 import { createBrowserClient } from "@supabase/auth-helpers-remix";
-import type { Database } from "./types/supabase";
+import {
+  json,
+  type LinksFunction,
+  type LoaderFunctionArgs,
+} from "@vercel/remix";
 import React from "react";
+import type { Database } from "./types/supabase";
 
-import styles from "./tailwind.css";
 import { getSession } from "./session";
+import styles from "./tailwind.css";
 
 export const config = { runtime: "edge" };
 

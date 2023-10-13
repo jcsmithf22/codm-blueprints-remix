@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  type ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-
+import { Separator } from "~/components/ui/separator";
 import {
   Table,
   TableBody,
@@ -14,24 +8,40 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import { Separator } from "~/components/ui/separator";
+
+import {
+  type ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type SortingState,
+} from "@tanstack/react-table";
+import { type PrimitiveAtom, useAtom } from "jotai";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  sortingAtom: PrimitiveAtom<SortingState>;
 }
 
 function DataTable<TData, TValue>({
   columns,
   data,
+  sortingAtom,
 }: DataTableProps<TData, TValue>) {
+  const [sorting, setSorting] = useAtom(sortingAtom);
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    state: {
+      sorting,
+    },
   });
-
-  console.log("rerender");
 
   return (
     <div className="border-b border-b-gray-200">
@@ -86,12 +96,4 @@ function DataTable<TData, TValue>({
   );
 }
 
-// export default React.memo(DataTable) as <TData, TValue>(
-//   props: DataTableProps<TData, TValue>
-// ) => JSX.Element;
-// export type Component = typeof DataTable;
 export default React.memo(DataTable) as typeof DataTable;
-// console.log(typeof DataTable);
-
-// const MemoizedDataTable = React.memo(DataTable) as typeof DataTable;
-// const LazyLoaded = React.lazy(() => import("./DataTable"));

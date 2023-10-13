@@ -1,11 +1,12 @@
-import { Await, Outlet, useLoaderData } from "@remix-run/react";
-import DashboardNavigation from "~/components/navigation/DashboardNavigation";
-import type { Database, Json } from "~/types/supabase";
-import { type LoaderFunctionArgs, defer } from "@vercel/remix";
-import { getItems, getAttachments } from "~/lib/api";
-import { getSession } from "~/session";
 import { Suspense } from "react";
+import DashboardNavigation from "~/components/navigation/DashboardNavigation";
+import { getAttachments, getItems } from "~/lib/api";
+import { getSession } from "~/session";
 
+import { Await, Outlet, useLoaderData } from "@remix-run/react";
+import { defer, type LoaderFunctionArgs } from "@vercel/remix";
+
+import type { Database, Json } from "~/types/supabase";
 export type Model = Database["public"]["Tables"]["models"]["Row"];
 export type Type = Database["public"]["Tables"]["attachment_names"]["Row"];
 export type Attachment = {

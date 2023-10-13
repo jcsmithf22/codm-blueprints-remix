@@ -7,10 +7,9 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "~/components/ui/sheet";
-
-import type { PrimitiveAtom } from "jotai";
 import { cn } from "~/lib/utils";
 
+import type { PrimitiveAtom } from "jotai";
 type PropTypes = {
   title: string;
   description: string;
@@ -18,7 +17,7 @@ type PropTypes = {
   children: React.ReactNode;
   side?: "left" | "right";
   className?: string;
-  atom: PrimitiveAtom<boolean>;
+  state: PrimitiveAtom<boolean>;
 };
 
 export default function Sidebar({
@@ -28,14 +27,17 @@ export default function Sidebar({
   children,
   side = "right",
   className,
-  atom,
+  state,
 }: PropTypes) {
-  const [open, setOpen] = useAtom(atom);
+  const [open, setOpen] = useAtom(state);
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>{trigger}</SheetTrigger>
-      <SheetContent className={cn("sm:max-w-lg", className)} side={side}>
+      <SheetContent
+        className={cn("sm:max-w-md max-w-full w-full", className)}
+        side={side}
+      >
         <SheetHeader>
           <SheetTitle>{title}</SheetTitle>
           <SheetDescription>{description}</SheetDescription>

@@ -7,12 +7,12 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import { useFetcher, useOutletContext } from "@remix-run/react";
+import { useOutletContext } from "@remix-run/react";
 import type { Attachment } from "./_default.dashboard";
 import DataTable from "~/components/table/DataTable";
 import { AttachmentColumns } from "~/components/table/columns";
 import type { Database } from "~/types/supabase";
-import { atom, useSetAtom } from "jotai";
+import { atom, useAtom, useSetAtom } from "jotai";
 import Sidebar from "~/components/editor/Sidebar";
 
 export type SingleAttachment =
@@ -20,6 +20,7 @@ export type SingleAttachment =
 
 const editorOpenAtom = atom(false);
 const insertOpenAtom = atom(false);
+export const editorItemIdAtom = atom<number | null>(null);
 
 export default function Page() {
   const { attachments } = useOutletContext<{
@@ -27,28 +28,14 @@ export default function Page() {
   }>();
 
   const setOpen = useSetAtom(editorOpenAtom);
+  const [itemId, setItemId] = useAtom(editorItemIdAtom);
 
-  const fetcher = useFetcher<{ data: SingleAttachment }>();
-  const fetcherRef = React.useRef(fetcher);
-
-  // const [editorOpen, setEditorOpen] = React.useState(false);
-
-  const editorFunction = React.useCallback(
-    async (id: number) => {
-      console.log(id);
-      fetcherRef.current.load(`/api/attachments/${id}`);
-      setOpen(true);
-      // setEditorOpen(true);
-    },
-    [setOpen]
-  );
+  const editorFunction = React.useCallback(() => setOpen(true), [setOpen]);
 
   const columns = React.useMemo(
-    () => AttachmentColumns(editorFunction),
-    [editorFunction]
+    () => AttachmentColumns(editorFunction, setItemId),
+    [editorFunction, setItemId]
   );
-
-  console.log("attachment-dashboard-reload");
 
   return (
     <>
@@ -117,8 +104,12 @@ export default function Page() {
         title="Attachment Editor"
         description="Edit an existing gun attachment."
       >
-        {fetcher.state === "idle" && fetcher.data && (
-          <>{JSON.stringify(fetcher.data.data)}</>
+        {itemId && (
+          <>
+            {JSON.stringify(
+              attachments.find((attachment) => attachment.id === itemId)
+            )}
+          </>
         )}
       </Sidebar>
     </>

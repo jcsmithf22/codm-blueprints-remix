@@ -1,4 +1,5 @@
 import type { ColumnDef } from "@tanstack/react-table";
+import type { SetStateAction } from "jotai";
 import type { Attachment, Type } from "~/routes/_default.dashboard";
 
 type ModelAttachment = {
@@ -13,7 +14,10 @@ type Characteristics = {
   cons: Array<string>;
 };
 
-export const ModelColumns = (editorFunction: (id: number) => void) => {
+export const ModelColumns = (
+  editorFunction: () => void,
+  setItemId: (args_0: SetStateAction<number | null>) => void
+) => {
   const columns: ColumnDef<ModelAttachment>[] = [
     {
       accessorKey: "name",
@@ -33,7 +37,12 @@ export const ModelColumns = (editorFunction: (id: number) => void) => {
       header: "",
       cell: (props) => (
         <div className="w-full flex justify-center">
-          <button onClick={() => editorFunction(props.getValue() as number)}>
+          <button
+            onClick={() => {
+              setItemId(props.getValue() as number);
+              editorFunction();
+            }}
+          >
             Edit
           </button>
         </div>
@@ -43,7 +52,10 @@ export const ModelColumns = (editorFunction: (id: number) => void) => {
   return columns;
 };
 
-export const TypeColumns = (editorFunction: (id: number) => void) => {
+export const TypeColumns = (
+  editorFunction: () => void,
+  setItemId: (args_0: SetStateAction<number | null>) => void
+) => {
   const columns: ColumnDef<Type>[] = [
     {
       accessorKey: "name",
@@ -58,7 +70,12 @@ export const TypeColumns = (editorFunction: (id: number) => void) => {
       header: "",
       cell: (props) => (
         <div className="w-full flex justify-center">
-          <button onClick={() => editorFunction(props.getValue() as number)}>
+          <button
+            onClick={() => {
+              setItemId(props.getValue() as number);
+              editorFunction();
+            }}
+          >
             Edit
           </button>
         </div>
@@ -70,7 +87,10 @@ export const TypeColumns = (editorFunction: (id: number) => void) => {
 
 // Make attachment columns more efficient, probably by storing the data as a string
 
-export const AttachmentColumns = (editorFunction: (id: number) => void) => {
+export const AttachmentColumns = (
+  editorFunction: () => void,
+  setItemId: (args_0: SetStateAction<number | null>) => void
+) => {
   const columns: ColumnDef<Attachment>[] = [
     {
       accessorKey: "attachment_names.name",
@@ -141,7 +161,12 @@ export const AttachmentColumns = (editorFunction: (id: number) => void) => {
       header: "",
       cell: (props) => (
         <div className="w-full flex justify-center">
-          <button onClick={() => editorFunction(props.getValue() as number)}>
+          <button
+            onClick={() => {
+              setItemId(props.getValue() as number);
+              editorFunction();
+            }}
+          >
             Edit
           </button>
         </div>

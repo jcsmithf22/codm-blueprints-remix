@@ -10,6 +10,8 @@ export type Model = Database["public"]["Tables"]["models"]["Row"];
 export type Type = Database["public"]["Tables"]["attachment_names"]["Row"];
 export type Attachment = {
   id: number;
+  model: number;
+  type: number;
   attachment_names: {
     name: string;
     type: string;

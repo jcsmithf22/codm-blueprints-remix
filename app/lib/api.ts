@@ -62,7 +62,7 @@ export async function getAttachments(supabase: SupabaseClient<Database>) {
   const { data: attachments } = await supabase
     .from("attachments")
     .select(
-      `id, attachment_names (name, type), models (id, name), characteristics`
+      `id, model, type, attachment_names (name, type), models (id, name), characteristics`
     )
     .order("id")
     .throwOnError();

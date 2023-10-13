@@ -7,38 +7,30 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "~/components/ui/sheet";
-import { useFetcher, useOutletContext } from "@remix-run/react";
+import { useOutletContext } from "@remix-run/react";
 import type { Type } from "./_default.dashboard";
 import DataTable from "~/components/table/DataTable";
 import { TypeColumns } from "~/components/table/columns";
+import Sidebar from "~/components/editor/Sidebar";
+import { atom, useAtom, useSetAtom } from "jotai";
+
+const editorOpenAtom = atom(false);
+const insertOpenAtom = atom(false);
+export const editorItemIdAtom = atom<number | null>(null);
 
 export default function Page() {
   const { types } = useOutletContext<{
     types: Array<Type>;
   }>();
 
-  const fetcher = useFetcher<{ data: Type }>();
-  const fetcherRef = React.useRef(fetcher);
+  const setOpen = useSetAtom(editorOpenAtom);
+  const [itemId, setItemId] = useAtom(editorItemIdAtom);
 
-  const [editorOpen, setEditorOpen] = React.useState(false);
-
-  const editorFunction = React.useCallback(async (id: number) => {
-    console.log(id);
-    fetcherRef.current.load(`/api/types/${id}`);
-    setEditorOpen(true);
-  }, []);
+  const editorFunction = React.useCallback(() => setOpen(true), [setOpen]);
 
   const columns = React.useMemo(
-    () => TypeColumns(editorFunction),
-    [editorFunction]
+    () => TypeColumns(editorFunction, setItemId),
+    [editorFunction, setItemId]
   );
 
   return (
@@ -83,8 +75,11 @@ export default function Page() {
           </DropdownMenuContent>
         </DropdownMenu>
         <Separator orientation="vertical" className="h-6 mx-1" />
-        <Sheet>
-          <SheetTrigger asChild>
+        <Sidebar
+          atom={insertOpenAtom}
+          title="Type Editor"
+          description="Add a new gun attachment type to the database."
+          trigger={
             <Button
               variant="default"
               size="sm"
@@ -92,33 +87,23 @@ export default function Page() {
             >
               Insert
             </Button>
-          </SheetTrigger>
-          <SheetContent className="sm:max-w-lg">
-            <SheetHeader>
-              <SheetTitle>Model Editor</SheetTitle>
-              <SheetDescription>
-                Upload a new gun model to the database.
-              </SheetDescription>
-            </SheetHeader>
-          </SheetContent>
-        </Sheet>
+          }
+        >
+          This is where we create new stuff
+        </Sidebar>
       </div>
       <div className="pt-10">
         <DataTable columns={columns} data={types} />
       </div>
-      <Sheet open={editorOpen} onOpenChange={setEditorOpen}>
-        <SheetContent className="sm:max-w-lg">
-          <SheetHeader>
-            <SheetTitle>Type Editor</SheetTitle>
-            <SheetDescription>
-              Edit an existing gun attachment type.
-              {fetcher.state === "idle" && (
-                <>{JSON.stringify(fetcher.data?.data)}</>
-              )}
-            </SheetDescription>
-          </SheetHeader>
-        </SheetContent>
-      </Sheet>
+      <Sidebar
+        atom={editorOpenAtom}
+        title="Type Editor"
+        description="Edit an existing gun attachment type."
+      >
+        {itemId && (
+          <>{JSON.stringify(types.find((type) => type.id === itemId))}</>
+        )}
+      </Sidebar>
     </>
   );
 }

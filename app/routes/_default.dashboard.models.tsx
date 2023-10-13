@@ -7,18 +7,16 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "~/components/ui/sheet";
-import { useFetcher, useOutletContext } from "@remix-run/react";
+import { useOutletContext } from "@remix-run/react";
 import type { Attachment, Model } from "./_default.dashboard";
 import DataTable from "~/components/table/DataTable";
 import { ModelColumns } from "~/components/table/columns";
+import Sidebar from "~/components/editor/Sidebar";
+import { atom, useAtom, useSetAtom } from "jotai";
+
+const editorOpenAtom = atom(false);
+const insertOpenAtom = atom(false);
+export const editorItemIdAtom = atom<number | null>(null);
 
 export default function Page() {
   const { models, attachments } = useOutletContext<{
@@ -26,10 +24,8 @@ export default function Page() {
     attachments: Array<Attachment>;
   }>();
 
-  const fetcher = useFetcher<{ data: Model }>();
-  const fetcherRef = React.useRef(fetcher);
-
-  const [editorOpen, setEditorOpen] = React.useState(false);
+  const setOpen = useSetAtom(editorOpenAtom);
+  const [itemId, setItemId] = useAtom(editorItemIdAtom);
 
   const data = React.useMemo(
     () =>
@@ -42,15 +38,11 @@ export default function Page() {
     [attachments, models]
   );
 
-  const editorFunction = React.useCallback(async (id: number) => {
-    console.log(id);
-    fetcherRef.current.load(`/api/models/${id}`);
-    setEditorOpen(true);
-  }, []);
+  const editorFunction = React.useCallback(() => setOpen(true), [setOpen]);
 
   const columns = React.useMemo(
-    () => ModelColumns(editorFunction),
-    [editorFunction]
+    () => ModelColumns(editorFunction, setItemId),
+    [editorFunction, setItemId]
   );
 
   return (
@@ -95,8 +87,11 @@ export default function Page() {
           </DropdownMenuContent>
         </DropdownMenu>
         <Separator orientation="vertical" className="h-6 mx-1" />
-        <Sheet>
-          <SheetTrigger asChild>
+        <Sidebar
+          atom={insertOpenAtom}
+          title="Model Editor"
+          description="Add a new gun model to the database."
+          trigger={
             <Button
               variant="default"
               size="sm"
@@ -104,33 +99,23 @@ export default function Page() {
             >
               Insert
             </Button>
-          </SheetTrigger>
-          <SheetContent className="sm:max-w-lg">
-            <SheetHeader>
-              <SheetTitle>Model Editor</SheetTitle>
-              <SheetDescription>
-                Upload a new gun model to the database.
-              </SheetDescription>
-            </SheetHeader>
-          </SheetContent>
-        </Sheet>
+          }
+        >
+          This is where we create new stuff
+        </Sidebar>
       </div>
       <div className="pt-10">
         <DataTable columns={columns} data={data} />
       </div>
-      <Sheet open={editorOpen} onOpenChange={setEditorOpen}>
-        <SheetContent className="sm:max-w-lg">
-          <SheetHeader>
-            <SheetTitle>Model Editor</SheetTitle>
-            <SheetDescription>
-              Upload a new gun model to the database.
-              {fetcher.state === "idle" && (
-                <>{JSON.stringify(fetcher.data?.data)}</>
-              )}
-            </SheetDescription>
-          </SheetHeader>
-        </SheetContent>
-      </Sheet>
+      <Sidebar
+        atom={editorOpenAtom}
+        title="Model Editor"
+        description="Edit an existing gun model."
+      >
+        {itemId && (
+          <>{JSON.stringify(models.find((model) => model.id === itemId))}</>
+        )}
+      </Sidebar>
     </>
   );
 }

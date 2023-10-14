@@ -52,7 +52,7 @@ function DataTableTemplate<TData, TValue>({
   });
 
   return (
-    <div className="border-b border-b-gray-200">
+    <div className="border-b border-b-gray-200 w-full md:w-fit md:min-w-[512px]">
       <Table>
         <TableHeader className="bg-white">
           {table.getHeaderGroups().map((headerGroup) => (

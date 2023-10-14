@@ -1,3 +1,5 @@
+import type { PostgrestError } from "@supabase/supabase-js";
+
 export const gunTypes: { [key: string]: string } = {
   assault: "Assault",
   sniper: "Sniper",
@@ -22,4 +24,12 @@ export const attachmentTypes: { [key: string]: string } = {
 export type Sort = {
   id: string;
   desc: boolean;
+};
+
+export type Error = {
+  name?: string;
+  type?: string;
+  model?: string;
+  server?: PostgrestError;
+  request?: string;
 };

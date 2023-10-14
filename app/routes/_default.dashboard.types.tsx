@@ -2,7 +2,7 @@ import { atom, useAtom, useSetAtom } from "jotai";
 import React from "react";
 import Sidebar from "~/components/editor/Sidebar";
 import TypeEditor from "~/components/editor/TypeEditor";
-import { TypeColumns } from "~/components/table/columns";
+import { typeColumns } from "~/components/table/columns";
 import Controls from "~/components/table/Controls";
 import DataTable from "~/components/table/DataTable";
 
@@ -23,13 +23,17 @@ export default function Page() {
     types: Array<Type>;
   }>();
 
-  const setOpen = useSetAtom(updateAtom);
+  const setUpdateOpen = useSetAtom(updateAtom);
+  const setInsertOpen = useSetAtom(insertAtom);
   const [itemId, setItemId] = useAtom(itemIdAtom);
 
-  const openEditor = React.useCallback(() => setOpen(true), [setOpen]);
+  const openEditor = React.useCallback(
+    () => setUpdateOpen(true),
+    [setUpdateOpen]
+  );
 
   const columns = React.useMemo(
-    () => TypeColumns(openEditor, setItemId),
+    () => typeColumns(openEditor, setItemId),
     [openEditor, setItemId]
   );
 
@@ -48,7 +52,7 @@ export default function Page() {
         title="Attachment Type Editor"
         description="Add a new gun attachment type to the database."
       >
-        <TypeEditor />
+        <TypeEditor setOpen={setInsertOpen} />
       </Sidebar>
       <Sidebar
         state={updateAtom}
@@ -59,6 +63,7 @@ export default function Page() {
           <TypeEditor
             id={itemId}
             type={types.find((type) => type.id === itemId)}
+            setOpen={setUpdateOpen}
           />
         )}
       </Sidebar>

@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import DashboardNavigation from "~/components/navigation/DashboardNavigation";
 import { getAttachments, getItems } from "~/lib/api";
-import { getSession } from "~/session";
+import { getProtectedSession } from "~/session";
 
 import { Await, Outlet, useLoaderData } from "@remix-run/react";
 import { defer, type LoaderFunctionArgs } from "@vercel/remix";
@@ -25,7 +25,7 @@ export type Attachment = {
 };
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { supabase, response } = await getSession(request);
+  const { supabase, response } = await getProtectedSession(request);
 
   const models = getItems<Model>(supabase, "models");
   const attachments = getAttachments(supabase);

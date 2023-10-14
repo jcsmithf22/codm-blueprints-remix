@@ -14,7 +14,7 @@ type Characteristics = {
   cons: Array<string>;
 };
 
-export const ModelColumns = (
+export const modelColumns = (
   openEditor: () => void,
   setItemId: (args_0: SetStateAction<number | null>) => void
 ) => {
@@ -54,7 +54,7 @@ export const ModelColumns = (
   return columns;
 };
 
-export const TypeColumns = (
+export const typeColumns = (
   openEditor: () => void,
   setItemId: (args_0: SetStateAction<number | null>) => void
 ) => {
@@ -91,7 +91,7 @@ export const TypeColumns = (
 
 // Make attachment columns more efficient, probably by storing the data as a string
 
-export const AttachmentColumns = (
+export const attachmentColumns = (
   openEditor: () => void,
   setItemId: (args_0: SetStateAction<number | null>) => void
 ) => {

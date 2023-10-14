@@ -1,5 +1,5 @@
 import { produce } from "immer";
-import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
+import { CheckIcon, ChevronsUpDownIcon, RefreshCw } from "lucide-react";
 import React from "react";
 import { flushSync } from "react-dom";
 import { Button } from "~/components/ui/button";
@@ -16,18 +16,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
-import {
-  deleteItem,
-  getItem,
-  getItems,
-  insertItem,
-  updateItem,
-} from "~/lib/api";
 import { cn } from "~/lib/utils";
 
 import { SheetClose } from "../ui/sheet";
 
 import type { Attachment, Model, Type } from "~/routes/_default.dashboard";
+import type { Error } from "~/lib/types";
+import { useFetcher } from "@remix-run/react";
+import type { SetStateAction } from "jotai";
 
 type SingleAttachment = {
   characteristics: {
@@ -103,22 +99,18 @@ const reducer = (state: SingleAttachment, action: Action) => {
   });
 };
 
-type Error = {
-  type?: string;
-  model?: string;
-  server?: string;
-};
-
 export default function AttachmentEditor({
   id,
   attachment,
   models,
   types,
+  setOpen,
 }: {
   id?: number;
   attachment?: Attachment;
   models: Array<Model>;
   types: Array<Type>;
+  setOpen: (args_0: SetStateAction<boolean>) => void;
 }) {
   const defaultAttachment: SingleAttachment = attachment
     ? ({
@@ -137,7 +129,17 @@ export default function AttachmentEditor({
 
   const [formData, dispatch] = React.useReducer(reducer, defaultAttachment);
 
-  const [error, setError] = React.useState<Error | null>(null);
+  const fetcher = useFetcher<{ success: boolean; errors: Error }>();
+
+  const error = fetcher.data?.errors;
+  const success = fetcher.data?.success;
+  const pending = fetcher.state !== "idle";
+
+  React.useEffect(() => {
+    if (success) {
+      setOpen(false);
+    }
+  }, [setOpen, success]);
 
   // ref for the last added input in the pros and cons
   const currentConInput = React.useRef<HTMLInputElement>(null);
@@ -146,41 +148,6 @@ export default function AttachmentEditor({
   // index of the last item in the pros and cons arrays
   const lastCon = formData ? formData.characteristics.cons.length - 1 : -1;
   const lastPro = formData ? formData.characteristics.pros.length - 1 : -1;
-
-  // updates formData when the attachment is loaded
-
-  const handleSubmit = async () => {
-    const submitErrors: Error = {};
-    if (formData.type === -1) {
-      submitErrors.type = "Please select a type";
-    }
-    if (formData.model === -1) {
-      submitErrors.model = "Please select a model";
-    }
-    if (Object.keys(submitErrors).length > 0) {
-      setError(submitErrors);
-      return;
-    }
-    const filteredState = produce(formData, (draft) => {
-      draft.characteristics.pros = draft.characteristics.pros.filter(
-        (pro) => pro !== ""
-      );
-      draft.characteristics.cons = draft.characteristics.cons.filter(
-        (con) => con !== ""
-      );
-    });
-
-    if (!id) {
-      // add new attachment
-      return;
-    }
-
-    // update attachment
-  };
-
-  const handleDelete = async (id: number) => {
-    // delete attachment
-  };
 
   const typeNameIndex = React.useMemo(
     () =>
@@ -203,12 +170,6 @@ export default function AttachmentEditor({
   const setType = React.useCallback(
     (value: string) => {
       const attachmentId = typeNameIndex[value.toLowerCase()]?.id || -1;
-      setError((error) => {
-        if (error?.type) {
-          return { ...error, type: undefined };
-        }
-        return error;
-      });
       dispatch({ type: "UpdateType", value: attachmentId });
     },
     [typeNameIndex]
@@ -217,21 +178,17 @@ export default function AttachmentEditor({
   const setModel = React.useCallback(
     (value: string) => {
       const modelId = modelNameIndex[value.toLowerCase()]?.id || -1;
-      setError((error) => {
-        if (error?.model) {
-          return { ...error, model: undefined };
-        }
-        return error;
-      });
       dispatch({ type: "UpdateModel", value: modelId });
     },
     [modelNameIndex]
   );
 
   return (
-    <form className="">
+    <fetcher.Form method={"POST"} action="/api/attachments">
+      <input type="hidden" name="id" value={id} />
       <div className="mt-10 flex flex-col gap-y-6">
         <div>
+          <input type="hidden" name="model" value={formData.model} />
           <SelectTemplate
             input={formData.model}
             data={models}
@@ -244,6 +201,7 @@ export default function AttachmentEditor({
         </div>
 
         <div>
+          <input type="hidden" name="type" value={formData.type} />
           <SelectTemplate
             input={formData.type}
             data={types}
@@ -254,6 +212,11 @@ export default function AttachmentEditor({
         </div>
 
         <div className="">
+          <input
+            type="hidden"
+            name="pros"
+            value={formData.characteristics.pros}
+          />
           <label
             className="block text-sm font-medium leading-6 text-gray-900"
             htmlFor="pro-0"
@@ -267,7 +230,7 @@ export default function AttachmentEditor({
                   ref={i === lastPro ? currentProInput : undefined}
                   type="text"
                   id={`pro-${i}`}
-                  name={`pro-${i}`}
+                  // name={`pro-${i}`}
                   value={pro}
                   onChange={(e) =>
                     dispatch({
@@ -317,6 +280,11 @@ export default function AttachmentEditor({
         </div>
 
         <div className="">
+          <input
+            type="hidden"
+            name="cons"
+            value={formData.characteristics.cons}
+          />
           <label
             className="block text-sm font-medium leading-6 text-gray-900"
             htmlFor="con-0"
@@ -330,7 +298,7 @@ export default function AttachmentEditor({
                   ref={i === lastCon ? currentConInput : undefined}
                   type="text"
                   id={`con-${i}`}
-                  name={`con-${i}`}
+                  // name={`con-${i}`}
                   value={con}
                   onChange={(e) =>
                     dispatch({
@@ -386,14 +354,15 @@ export default function AttachmentEditor({
       >
         {id && (
           <Button
-            type="button"
+            type="submit"
+            name="intent"
+            value="delete"
             variant="destructive"
-            onClick={() => handleDelete(id)}
           >
             Delete
           </Button>
         )}
-        <div className="space-x-2">
+        <div className="flex gap-x-2">
           <SheetClose asChild>
             <Button
               variant="ghost"
@@ -403,10 +372,18 @@ export default function AttachmentEditor({
               Cancel
             </Button>
           </SheetClose>
-          <Button type="submit">Save</Button>
+          <Button
+            className="flex gap-x-2"
+            name="intent"
+            value={id ? "update" : "insert"}
+            type="submit"
+          >
+            {pending && <RefreshCw className="h-3.5 w-3.5 animate-spin" />}
+            Submit
+          </Button>
         </div>
       </div>
-    </form>
+    </fetcher.Form>
   );
 }
 

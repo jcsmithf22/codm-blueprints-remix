@@ -10,6 +10,7 @@ import {
 import { cn } from "~/lib/utils";
 
 import type { PrimitiveAtom } from "jotai";
+
 type PropTypes = {
   title: string;
   description: string;

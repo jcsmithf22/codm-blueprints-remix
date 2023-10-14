@@ -6,8 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { deleteItem, getItem, insertItem, updateItem } from "~/lib/api";
-import { attachmentTypes } from "~/lib/types";
+import { type Error, attachmentTypes } from "~/lib/types";
 import { cn } from "~/lib/utils";
 
 import { Button } from "../ui/button";
@@ -15,6 +14,9 @@ import { Input } from "../ui/input";
 import { SheetClose } from "../ui/sheet";
 
 import type { Database } from "~/types/supabase";
+import { useFetcher } from "@remix-run/react";
+import type { SetStateAction } from "jotai";
+import { RefreshCw } from "lucide-react";
 
 type Type = Database["public"]["Tables"]["attachment_names"]["Insert"];
 
@@ -51,37 +53,38 @@ const reducer = (state: Type, action: Action) => {
 //   },
 // };
 
-type Error = {
-  name?: string;
-  server?: string;
-};
-
-export default function TypeEditor({ id, type }: { id?: number; type?: Type }) {
+export default function TypeEditor({
+  id,
+  type,
+  setOpen,
+}: {
+  id?: number;
+  type?: Type;
+  setOpen: (args_0: SetStateAction<boolean>) => void;
+}) {
   const [formData, dispatch] = React.useReducer(
     reducer,
     type || {
       name: "",
-      type: "assault",
+      type: "muzzle",
     }
   );
 
-  const [error, setError] = React.useState<Error | null>(null);
+  const fetcher = useFetcher<{ success: boolean; errors: Error }>();
 
-  const handleSubmit = async () => {
-    if (!id) {
-      // add new model
-      return;
+  const error = fetcher.data?.errors;
+  const success = fetcher.data?.success;
+  const pending = fetcher.state !== "idle";
+
+  React.useEffect(() => {
+    if (success) {
+      setOpen(false);
     }
-
-    // update model
-  };
-
-  const handleDelete = async (id: number) => {
-    // delete model
-  };
+  }, [setOpen, success]);
 
   return (
-    <form className="">
+    <fetcher.Form method={"POST"} action="/api/types">
+      <input type="hidden" name="id" value={id} />
       <div className="mt-10 flex flex-col gap-y-6">
         <div className="">
           <label
@@ -92,11 +95,12 @@ export default function TypeEditor({ id, type }: { id?: number; type?: Type }) {
           </label>
           <div className="mt-2">
             <Select
+              name="type"
               onValueChange={(value) => dispatch({ type: "UpdateType", value })}
               defaultValue={formData.type}
             >
               <SelectTrigger id="type">
-                <SelectValue placeholder="Select an weapon category" />
+                <SelectValue placeholder="Select an attachment variant" />
               </SelectTrigger>
               <SelectContent>
                 {Object.keys(attachmentTypes).map((key) => (
@@ -119,6 +123,7 @@ export default function TypeEditor({ id, type }: { id?: number; type?: Type }) {
           <div className="mt-2">
             <Input
               type="text"
+              name="name"
               id="name"
               value={formData.name}
               onChange={(e) =>
@@ -138,26 +143,34 @@ export default function TypeEditor({ id, type }: { id?: number; type?: Type }) {
         {id && (
           <Button
             type="button"
+            name="intent"
+            value="delete"
             variant="destructive"
-            onClick={() => handleDelete(id)}
           >
             Delete
           </Button>
         )}
-        <div className="space-x-2">
+        <div className="flex gap-x-2">
           <SheetClose asChild>
             <Button
               variant="ghost"
               type="button"
               className="text-sm font-semibold leading-6 text-gray-900"
-              // onClick={() => console.log("add sidebar state atom here")}
             >
               Cancel
             </Button>
           </SheetClose>
-          <Button type="submit">Save</Button>
+          <Button
+            className="flex gap-x-2"
+            name="intent"
+            value={id ? "update" : "insert"}
+            type="submit"
+          >
+            {pending && <RefreshCw className="h-3.5 w-3.5 animate-spin" />}
+            Submit
+          </Button>
         </div>
       </div>
-    </form>
+    </fetcher.Form>
   );
 }

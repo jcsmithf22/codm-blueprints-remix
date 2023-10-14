@@ -6,7 +6,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { deleteItem, getItem, insertItem, updateItem } from "~/lib/api";
 import { gunTypes } from "~/lib/types";
 import { cn } from "~/lib/utils";
 
@@ -15,6 +14,10 @@ import { Input } from "../ui/input";
 import { SheetClose } from "../ui/sheet";
 
 import type { Database } from "~/types/supabase";
+import { useFetcher } from "@remix-run/react";
+import type { Error } from "~/lib/types";
+import type { SetStateAction } from "jotai";
+import { RefreshCw } from "lucide-react";
 
 type Model = Database["public"]["Tables"]["models"]["Insert"];
 
@@ -42,26 +45,14 @@ const reducer = (state: Model, action: Action) => {
   }
 };
 
-// const errorMessages: {
-//   [key: string]: { message: string; field: string } | undefined;
-// } = {
-//   "23505": {
-//     message: "A model with that name already exists",
-//     field: "name",
-//   },
-// };
-
-type Error = {
-  name?: string;
-  server?: string;
-};
-
 export default function ModelEditor({
   id,
   model,
+  setOpen,
 }: {
   id?: number;
   model?: Model;
+  setOpen: (args_0: SetStateAction<boolean>) => void;
 }) {
   const [formData, dispatch] = React.useReducer(
     reducer,
@@ -71,23 +62,21 @@ export default function ModelEditor({
     }
   );
 
-  const [error, setError] = React.useState<Error | null>(null);
+  const fetcher = useFetcher<{ success: boolean; errors: Error }>();
 
-  const handleSubmit = async () => {
-    if (!id) {
-      // add new model
-      return;
+  const error = fetcher.data?.errors;
+  const success = fetcher.data?.success;
+  const pending = fetcher.state !== "idle";
+
+  React.useEffect(() => {
+    if (success) {
+      setOpen(false);
     }
-
-    // update model
-  };
-
-  const handleDelete = async (id: number) => {
-    // delete model
-  };
+  }, [setOpen, success]);
 
   return (
-    <form className="">
+    <fetcher.Form method={"POST"} action="/api/models">
+      <input type="hidden" name="id" value={id} />
       <div className="mt-10 flex flex-col gap-y-6">
         <div className="">
           <label
@@ -98,11 +87,12 @@ export default function ModelEditor({
           </label>
           <div className="mt-2">
             <Select
+              name="type"
               onValueChange={(value) => dispatch({ type: "UpdateType", value })}
               defaultValue={formData.type}
             >
               <SelectTrigger id="type">
-                <SelectValue placeholder="Select an weapon category" />
+                <SelectValue placeholder="Select a weapon category" />
               </SelectTrigger>
               <SelectContent>
                 {Object.keys(gunTypes).map((key) => (
@@ -124,6 +114,7 @@ export default function ModelEditor({
           </label>
           <div className="mt-2">
             <Input
+              name="name"
               type="text"
               id="name"
               value={formData.name}
@@ -143,27 +134,35 @@ export default function ModelEditor({
       >
         {id && (
           <Button
-            type="button"
+            type="submit"
+            name="intent"
+            value="delete"
             variant="destructive"
-            onClick={() => handleDelete(id)}
           >
             Delete
           </Button>
         )}
-        <div className="space-x-2">
+        <div className="flex gap-x-2">
           <SheetClose asChild>
             <Button
               variant="ghost"
               type="button"
               className="text-sm font-semibold leading-6 text-gray-900"
-              // onClick={() => console.log("add sidebar state atom here")}
             >
               Cancel
             </Button>
           </SheetClose>
-          <Button type="submit">Save</Button>
+          <Button
+            className="flex gap-x-2"
+            name="intent"
+            value={id ? "update" : "insert"}
+            type="submit"
+          >
+            {pending && <RefreshCw className="h-3.5 w-3.5 animate-spin" />}
+            Submit
+          </Button>
         </div>
       </div>
-    </form>
+    </fetcher.Form>
   );
 }

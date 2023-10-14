@@ -2,7 +2,7 @@ import { atom, useAtom, useSetAtom } from "jotai";
 import React from "react";
 import AttachmentEditor from "~/components/editor/AttachmentEditor";
 import Sidebar from "~/components/editor/Sidebar";
-import { AttachmentColumns } from "~/components/table/columns";
+import { attachmentColumns } from "~/components/table/columns";
 import Controls from "~/components/table/Controls";
 import DataTable from "~/components/table/DataTable";
 
@@ -29,15 +29,19 @@ export default function Page() {
     types: Array<Type>;
   }>();
 
-  const setOpen = useSetAtom(updateAtom);
+  const setUpdateOpen = useSetAtom(updateAtom);
+  const setInsertOpen = useSetAtom(insertAtom);
   const [itemId, setItemId] = useAtom(itemIdAtom);
 
-  const openEditor = React.useCallback(() => setOpen(true), [setOpen]);
+  const openEditor = React.useCallback(
+    () => setUpdateOpen(true),
+    [setUpdateOpen]
+  );
 
-  const columns = React.useMemo(() => {
-    console.log("recalculating columns");
-    return AttachmentColumns(openEditor, setItemId);
-  }, [openEditor, setItemId]);
+  const columns = React.useMemo(
+    () => attachmentColumns(openEditor, setItemId),
+    [openEditor, setItemId]
+  );
 
   return (
     <>
@@ -58,7 +62,11 @@ export default function Page() {
         title="Attachment Editor"
         description="Add a new gun attachment to the database."
       >
-        <AttachmentEditor models={models} types={types} />
+        <AttachmentEditor
+          models={models}
+          types={types}
+          setOpen={setInsertOpen}
+        />
       </Sidebar>
       <Sidebar
         state={updateAtom}
@@ -69,6 +77,7 @@ export default function Page() {
           <AttachmentEditor
             models={models}
             types={types}
+            setOpen={setUpdateOpen}
             attachment={attachments.find(
               (attachment) => attachment.id === itemId
             )}

@@ -2,7 +2,7 @@ import { atom, useAtom, useSetAtom } from "jotai";
 import React from "react";
 import ModelEditor from "~/components/editor/ModelEditor";
 import Sidebar from "~/components/editor/Sidebar";
-import { ModelColumns } from "~/components/table/columns";
+import { modelColumns } from "~/components/table/columns";
 import Controls from "~/components/table/Controls";
 import DataTable from "~/components/table/DataTable";
 
@@ -24,7 +24,8 @@ export default function Page() {
     attachments: Array<Attachment>;
   }>();
 
-  const setOpen = useSetAtom(updateAtom);
+  const setUpdateOpen = useSetAtom(updateAtom);
+  const setInsertOpen = useSetAtom(insertAtom);
   const [itemId, setItemId] = useAtom(itemIdAtom);
 
   const data = React.useMemo(
@@ -38,14 +39,15 @@ export default function Page() {
     [attachments, models]
   );
 
-  const openEditor = React.useCallback(() => setOpen(true), [setOpen]);
-
-  const columns = React.useMemo(
-    () => ModelColumns(openEditor, setItemId),
-    [openEditor, setItemId]
+  const openEditor = React.useCallback(
+    () => setUpdateOpen(true),
+    [setUpdateOpen]
   );
 
-  console.log("page rendered");
+  const columns = React.useMemo(
+    () => modelColumns(openEditor, setItemId),
+    [openEditor, setItemId]
+  );
 
   return (
     <>
@@ -62,7 +64,7 @@ export default function Page() {
         title="Model Editor"
         description="Add a new gun model to the database."
       >
-        <ModelEditor />
+        <ModelEditor setOpen={setInsertOpen} />
       </Sidebar>
       <Sidebar
         state={updateAtom}
@@ -73,6 +75,7 @@ export default function Page() {
           <ModelEditor
             id={itemId}
             model={models.find((model) => model.id === itemId)}
+            setOpen={setUpdateOpen}
           />
         )}
       </Sidebar>

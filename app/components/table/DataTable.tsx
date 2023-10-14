@@ -25,7 +25,7 @@ interface DataTableProps<TData, TValue> {
   sortingAtom: PrimitiveAtom<SortingState>;
 }
 
-function DataTable<TData, TValue>({
+function DataTableTemplate<TData, TValue>({
   columns,
   data,
   sortingAtom,
@@ -95,5 +95,5 @@ function DataTable<TData, TValue>({
     </div>
   );
 }
-
-export default React.memo(DataTable) as typeof DataTable;
+const DataTable = React.memo(DataTableTemplate) as typeof DataTableTemplate;
+export default DataTable;

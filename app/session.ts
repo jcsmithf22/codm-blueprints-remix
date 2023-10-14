@@ -14,11 +14,13 @@ export async function getSession(request: Request) {
     data: { session },
   } = await supabase.auth.getSession();
 
-  return { supabase, session, response };
+  const uuid = session?.user.id;
+
+  return { supabase, session, response, uuid };
 }
 
 export async function getProtectedSession(request: Request) {
-  const { supabase, session, response } = await getSession(request);
+  const { supabase, session, response, uuid } = await getSession(request);
 
   if (!session) {
     throw redirect("/auth/login");
@@ -26,7 +28,7 @@ export async function getProtectedSession(request: Request) {
 
   const admin = session.user.app_metadata.claims_admin === true;
 
-  return { supabase, response, admin };
+  return { supabase, response, admin, uuid };
 }
 
 export async function getAdminSession(request: Request) {

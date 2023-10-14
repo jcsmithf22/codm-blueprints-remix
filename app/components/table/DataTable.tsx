@@ -93,7 +93,10 @@ function DataTableTemplate<TData, TValue>({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center border-r bg-gray-50"
+              >
                 No results.
               </TableCell>
             </TableRow>

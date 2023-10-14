@@ -2,12 +2,12 @@ import DashboardNavigation from "~/components/navigation/DashboardNavigation";
 import { getProtectedSession } from "~/session";
 
 import { Outlet, useLoaderData } from "@remix-run/react";
-import { defer, type LoaderFunctionArgs } from "@vercel/remix";
+import { json, type LoaderFunctionArgs } from "@vercel/remix";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { response, admin } = await getProtectedSession(request);
 
-  return defer({ admin }, { headers: response.headers });
+  return json({ admin }, { headers: response.headers });
 };
 
 export default function Layout() {

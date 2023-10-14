@@ -9,7 +9,7 @@ import { cn, focusStyles } from "~/lib/utils";
 import type { Database } from "~/types/supabase";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-export default function Login() {
+export default function SignUp() {
   const navigate = useNavigate();
   const { supabase } = useOutletContext<{
     supabase: SupabaseClient<Database>;
@@ -18,11 +18,20 @@ export default function Login() {
   const [formData, setFormData] = React.useState({
     email: "",
     password: "",
+    username: "",
   });
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { error } = await supabase.auth.signInWithPassword(formData);
+    const { error } = await supabase.auth.signUp({
+      email: formData.email,
+      password: formData.password,
+      options: {
+        data: {
+          username: formData.username,
+        },
+      },
+    });
     if (!error) {
       navigate("/");
     }
@@ -48,18 +57,18 @@ export default function Login() {
           <div className="mx-auto w-full max-w-sm lg:w-96">
             <div>
               <h2 className="text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                Sign in to your account
+                Create your account
               </h2>
               <p className="mt-2 text-sm leading-6 text-gray-500">
-                Don't have an account?{" "}
+                Already have an account?{" "}
                 <Link
-                  to="/auth/signup"
+                  to="/auth/login"
                   className={cn(
                     "font-semibold text-blue-600 hover:text-blue-500 rounded-md",
                     focusStyles
                   )}
                 >
-                  Sign up
+                  Login
                 </Link>
               </p>
             </div>
@@ -67,6 +76,27 @@ export default function Login() {
             <div className="mt-10">
               <div>
                 <form onSubmit={handleSubmit} className="space-y-6">
+                  <div>
+                    <Label htmlFor="username" className="text-sm">
+                      Username
+                    </Label>
+                    <div className="mt-2">
+                      <Input
+                        id="username"
+                        name="username"
+                        type="username"
+                        autoComplete="off"
+                        required
+                        value={formData.username}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            username: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
                   <div>
                     <Label htmlFor="email" className="text-sm">
                       Email address
@@ -98,7 +128,7 @@ export default function Login() {
                         id="password"
                         name="password"
                         type="password"
-                        autoComplete="current-password"
+                        autoComplete="new-password"
                         required
                         value={formData.password}
                         onChange={(e) =>
@@ -111,7 +141,7 @@ export default function Login() {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-end">
+                  {/* <div className="flex items-center justify-end">
                     <div className="text-sm leading-6">
                       <Link
                         to="#"
@@ -123,11 +153,11 @@ export default function Login() {
                         Forgot password?
                       </Link>
                     </div>
-                  </div>
+                  </div> */}
 
                   <div>
                     <Button className="w-full" type="submit">
-                      Sign in
+                      Create account
                     </Button>
                   </div>
                 </form>

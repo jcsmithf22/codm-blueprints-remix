@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "@remix-run/react";
 import type { Session } from "@supabase/supabase-js";
 import { cn } from "~/lib/utils";
-import { Search, X, Bell } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import {
@@ -12,6 +12,7 @@ import {
   DropdownMenuItem,
 } from "../ui/dropdown-menu";
 import { motion } from "framer-motion";
+import BlankProfile from "~/assets/blank_profile.avif";
 
 type Navigation = {
   name: string;
@@ -36,10 +37,15 @@ const navigation: Navigation[] = [
 export default function Nav({
   pathname,
   session,
+  user_data,
   logout,
 }: {
   pathname: string;
   session: Session | null;
+  user_data: {
+    avatar_url: string | null;
+    username: string | null;
+  } | null;
   logout: () => Promise<void>;
 }) {
   // const [open, setOpen] = React.useState(false);
@@ -48,6 +54,9 @@ export default function Nav({
     null
   );
   const id = React.useId();
+  // const username = user_data ? user_data.username : null;
+  const username = user_data?.username || null;
+  const avatar_url = user_data?.avatar_url || BlankProfile;
   return (
     <nav className="bg-white border-b border-b-gray-200 fixed inset-x-0 top-0 z-50">
       <div className="px-2 sm:px-4">
@@ -70,7 +79,7 @@ export default function Nav({
                 {navigation.map(({ name, href }) => {
                   const selected =
                     pathname === href ||
-                    (href === "/dashboard/attachments" &&
+                    (href === "/dashboard" &&
                       pathname.startsWith("/dashboard"));
 
                   return (
@@ -140,10 +149,10 @@ export default function Nav({
               )}
             </div>
           </div>
-          <div className="hidden lg:flex justify-end">
+          <div className="hidden lg:flex justify-end flex-shrink-0">
             {session ? (
-              <div className="flex items-center">
-                <Button
+              <div className="flex items-center w-fit">
+                {/* <Button
                   variant="ghost"
                   size="icon"
                   className="relative rounded-full h-8 w-8"
@@ -151,23 +160,27 @@ export default function Nav({
                   <span className="absolute -inset-1.5" />
                   <span className="sr-only">View notifications</span>
                   <Bell className="h-5 w-5" aria-hidden="true" />
-                </Button>
+                </Button> */}
 
-                <div className="relative pl-4 flex-shrink-0 h-8">
+                {/* <div className="relative pl-4 flex-shrink-0 h-8"> */}
+                <div className="relative flex-shrink-0 h-8">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
                         variant="ghost"
-                        size="icon"
-                        className="relative rounded-full h-8 w-8"
+                        size="sm"
+                        className="relative rounded-full h-8 px-0 flex gap-x-2"
                       >
                         <span className="absolute -inset-1.5" />
                         <span className="sr-only">Open user menu</span>
                         <img
                           className="h-8 w-8 rounded-full"
-                          src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                          src={avatar_url}
                           alt=""
                         />
+                        {username && (
+                          <p className="pr-3 font-normal">{username}</p>
+                        )}
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>

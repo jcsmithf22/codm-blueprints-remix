@@ -34,12 +34,19 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY!,
   };
 
-  const { session, response } = await getSession(request);
+  const { session, response, uuid, supabase } = await getSession(request);
+
+  const { data: user_data } = await supabase
+    .from("profiles")
+    .select(`username, avatar_url`)
+    .eq("id", uuid as string)
+    .single();
 
   return json(
     {
       env,
       session,
+      user_data,
     },
     {
       headers: response.headers,
@@ -48,7 +55,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 export default function App() {
-  const { env, session } = useLoaderData<typeof loader>();
+  const { env, session, user_data } = useLoaderData<typeof loader>();
   const { revalidate } = useRevalidator();
   const [supabase] = React.useState(() =>
     createBrowserClient<Database>(env.SUPABASE_URL, env.SUPABASE_ANON_KEY)
@@ -80,7 +87,7 @@ export default function App() {
         <Links />
       </head>
       <body className="bg-gray-100">
-        <Outlet context={{ supabase, session }} />
+        <Outlet context={{ supabase, session, user_data }} />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />

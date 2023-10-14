@@ -57,7 +57,6 @@ export default function DashboardNavigation({ admin }: { admin?: boolean }) {
     null
   );
   const id = React.useId();
-  // const pathname = "/dashboard";
   return (
     <nav className="flex flex-1 flex-col">
       <ul

@@ -4,7 +4,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "@radix-ui/react-label";
 import { ArrowLeftIcon } from "lucide-react";
-import LoginImage from "~/assets/winter-gun.jpg";
+import LoginImage from "~/assets/winter-gun.avif";
 import { cn, focusStyles } from "~/lib/utils";
 import type { Database } from "~/types/supabase";
 import type { SupabaseClient } from "@supabase/supabase-js";

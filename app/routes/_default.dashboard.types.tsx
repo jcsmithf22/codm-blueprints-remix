@@ -18,7 +18,7 @@ export const itemIdAtom = atom<number | null>(null);
 const sortingAtom = atom<Array<Sort>>([]);
 const sortableColumns = ["name", "type"];
 const filteringAtom = atom<Array<Filter>>([]);
-const filterableColumns = ["name", "type", "model"];
+const filterableColumns = ["name", "type"];
 
 export default function Page() {
   const { types } = useOutletContext<{

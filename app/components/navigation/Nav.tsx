@@ -179,7 +179,7 @@ export default function Nav({
                           alt=""
                         />
                         {username && (
-                          <p className="pr-3 font-normal">{username}</p>
+                          <p className="pr-3 font-normal text-xs">{username}</p>
                         )}
                       </Button>
                     </DropdownMenuTrigger>

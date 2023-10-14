@@ -24,5 +24,17 @@ export async function getProtectedSession(request: Request) {
     throw redirect("/auth/login");
   }
 
+  const admin = session.user.app_metadata.claims_admin === true;
+
+  return { supabase, response, admin };
+}
+
+export async function getAdminSession(request: Request) {
+  const { supabase, session, response } = await getSession(request);
+
+  if (!session || session.user.app_metadata.claims_admin !== true) {
+    throw redirect("/auth/login");
+  }
+
   return { supabase, response };
 }

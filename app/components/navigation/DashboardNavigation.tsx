@@ -1,7 +1,7 @@
 import React from "react";
 import { cn } from "~/lib/utils";
 
-import { Puzzle, Boxes, Sword } from "lucide-react";
+import { Puzzle, Boxes, Sword, Rocket } from "lucide-react";
 import { Link, useLocation } from "@remix-run/react";
 import { motion } from "framer-motion";
 
@@ -16,28 +16,43 @@ type Navigation = {
   name: string;
   href: string;
   icon: Icon;
+  admin?: boolean;
 };
 
 const navigation: Navigation[] = [
   {
+    name: "Loadouts",
+    href: "/dashboard/loadouts",
+    icon: Rocket,
+  },
+  {
     name: "Attachments",
     href: "/dashboard/attachments",
     icon: Puzzle,
+    admin: true,
   },
   {
     name: "Models",
     href: "/dashboard/models",
     icon: Sword,
+    admin: true,
   },
   {
     name: "Types",
     href: "/dashboard/types",
     icon: Boxes,
+    admin: true,
   },
 ];
 
-export default function DashboardNavigation() {
+export default function DashboardNavigation({ admin }: { admin?: boolean }) {
   const { pathname } = useLocation();
+  const navItems = React.useMemo(() => {
+    if (admin) {
+      return navigation;
+    }
+    return navigation.filter(({ admin }) => !admin);
+  }, [admin]);
   const [hoveredNavItem, setHoveredNavItem] = React.useState<string | null>(
     null
   );
@@ -49,7 +64,7 @@ export default function DashboardNavigation() {
         className="-mx-2 space-y-1 group"
         onMouseLeave={() => setHoveredNavItem(null)}
       >
-        {navigation.map(({ name, icon: Icon, href }) => {
+        {navItems.map(({ name, icon: Icon, href }) => {
           const selected = pathname === href;
           return (
             <li

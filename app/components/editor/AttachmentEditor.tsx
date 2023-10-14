@@ -20,7 +20,11 @@ import { cn } from "~/lib/utils";
 
 import { SheetClose } from "../ui/sheet";
 
-import type { Attachment, Model, Type } from "~/routes/_default.dashboard";
+import type {
+  Attachment,
+  Model,
+  Type,
+} from "~/routes/_default.dashboard._admin";
 import type { Error } from "~/lib/types";
 import { useFetcher } from "@remix-run/react";
 import type { SetStateAction } from "jotai";
@@ -98,6 +102,19 @@ const reducer = (state: SingleAttachment, action: Action) => {
     }
   });
 };
+
+const errorMessages: {
+  [key: string]: { message: string; field: string } | undefined;
+} = {
+  "42501": {
+    message: "You do not have permission to perform this action",
+    field: "server",
+  },
+};
+
+enum errorCodes {
+  PERMISSION = "42501",
+}
 
 export default function AttachmentEditor({
   id,
@@ -346,6 +363,11 @@ export default function AttachmentEditor({
           </Button>
         </div>
       </div>
+      {error?.server?.code === errorCodes.PERMISSION && (
+        <p className="text-center text-sm text-red-500 my-6">
+          {errorMessages[error.server.code]?.message}
+        </p>
+      )}
       <div
         className={cn(
           "mt-6 flex items-center justify-end w-full",

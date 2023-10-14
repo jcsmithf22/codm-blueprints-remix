@@ -44,14 +44,23 @@ const reducer = (state: Type, action: Action) => {
   }
 };
 
-// const errorMessages: {
-//   [key: string]: { message: string; field: string } | undefined;
-// } = {
-//   "23505": {
-//     message: "A model with that name already exists",
-//     field: "name",
-//   },
-// };
+const errorMessages: {
+  [key: string]: { message: string; field: string } | undefined;
+} = {
+  "23505": {
+    message: "A model with that name already exists",
+    field: "name",
+  },
+  "42501": {
+    message: "You do not have permission to perform this action",
+    field: "server",
+  },
+};
+
+enum errorCodes {
+  DUPLICATE = "23505",
+  PERMISSION = "42501",
+}
 
 export default function TypeEditor({
   id,
@@ -75,6 +84,8 @@ export default function TypeEditor({
   const error = fetcher.data?.errors;
   const success = fetcher.data?.success;
   const pending = fetcher.state !== "idle";
+
+  console.log(error);
 
   React.useEffect(() => {
     if (success) {
@@ -132,8 +143,18 @@ export default function TypeEditor({
             />
           </div>
           {error?.name && <p className="text-sm text-red-500">{error.name}</p>}
+          {error?.server?.code === errorCodes.DUPLICATE && (
+            <p className="text-sm text-red-500">
+              {errorMessages[error.server.code]?.message}
+            </p>
+          )}
         </div>
       </div>
+      {error?.server?.code === errorCodes.PERMISSION && (
+        <p className="text-center text-sm text-red-500 my-6">
+          {errorMessages[error.server.code]?.message}
+        </p>
+      )}
       <div
         className={cn(
           "mt-6 flex items-center justify-end w-full",
@@ -142,7 +163,7 @@ export default function TypeEditor({
       >
         {id && (
           <Button
-            type="button"
+            type="submit"
             name="intent"
             value="delete"
             variant="destructive"

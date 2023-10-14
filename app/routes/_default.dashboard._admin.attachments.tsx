@@ -1,45 +1,39 @@
 import { atom, useAtom, useSetAtom } from "jotai";
 import React from "react";
-import ModelEditor from "~/components/editor/ModelEditor";
+import AttachmentEditor from "~/components/editor/AttachmentEditor";
 import Sidebar from "~/components/editor/Sidebar";
-import { modelColumns } from "~/components/table/columns";
+import { attachmentColumns } from "~/components/table/columns";
 import Controls from "~/components/table/Controls";
 import DataTable from "~/components/table/DataTable";
 
 import { useOutletContext } from "@remix-run/react";
 
+import type { Attachment, Model, Type } from "./_default.dashboard._admin";
+import type { Database } from "~/types/supabase";
 import type { Sort, Filter } from "~/lib/types";
-import type { Attachment, Model } from "./_default.dashboard";
+
+export type SingleAttachment =
+  Database["public"]["Tables"]["attachments"]["Row"];
 
 const updateAtom = atom(false);
 const insertAtom = atom(false);
 export const itemIdAtom = atom<number | null>(null);
 
 const sortingAtom = atom<Array<Sort>>([]);
-const sortableColumns = ["name", "type", "attachments"];
+const sortableColumns = ["name", "type", "model"];
 const filteringAtom = atom<Array<Filter>>([]);
-const filterableColumns = ["name", "type"];
+const filterableColumns = ["name", "type", "model", "characteristics"];
 
 export default function Page() {
-  const { models, attachments } = useOutletContext<{
-    models: Array<Model>;
+  const { attachments, models, types } = useOutletContext<{
     attachments: Array<Attachment>;
+    models: Array<Model>;
+    types: Array<Type>;
   }>();
 
   const setUpdateOpen = useSetAtom(updateAtom);
   const setInsertOpen = useSetAtom(insertAtom);
   const [itemId, setItemId] = useAtom(itemIdAtom);
-
-  const data = React.useMemo(
-    () =>
-      models.map((model) => ({
-        ...model,
-        attachments: attachments?.filter(
-          (attachment) => attachment.models?.id === model.id
-        ),
-      })),
-    [attachments, models]
-  );
 
   const openEditor = React.useCallback(
     () => setUpdateOpen(true),
@@ -47,7 +41,7 @@ export default function Page() {
   );
 
   const columns = React.useMemo(
-    () => modelColumns(openEditor, setItemId),
+    () => attachmentColumns(openEditor, setItemId),
     [openEditor, setItemId]
   );
 
@@ -55,8 +49,8 @@ export default function Page() {
     <>
       <Controls
         insertAtom={insertAtom}
-        sortableColumns={sortableColumns}
         sortingAtom={sortingAtom}
+        sortableColumns={sortableColumns}
         filteringAtom={filteringAtom}
         filterableColumns={filterableColumns}
       />
@@ -65,26 +59,34 @@ export default function Page() {
           sortingAtom={sortingAtom}
           filteringAtom={filteringAtom}
           columns={columns}
-          data={data}
+          data={attachments}
         />
       </div>
       <Sidebar
         state={insertAtom}
-        title="Model Editor"
-        description="Add a new gun model to the database."
+        title="Attachment Editor"
+        description="Add a new gun attachment to the database."
       >
-        <ModelEditor setOpen={setInsertOpen} />
+        <AttachmentEditor
+          models={models}
+          types={types}
+          setOpen={setInsertOpen}
+        />
       </Sidebar>
       <Sidebar
         state={updateAtom}
-        title="Model Editor"
-        description="Edit an existing gun model."
+        title="Attachment Editor"
+        description="Edit an existing gun attachment."
       >
         {itemId && (
-          <ModelEditor
-            id={itemId}
-            model={models.find((model) => model.id === itemId)}
+          <AttachmentEditor
+            models={models}
+            types={types}
             setOpen={setUpdateOpen}
+            attachment={attachments.find(
+              (attachment) => attachment.id === itemId
+            )}
+            id={itemId}
           />
         )}
       </Sidebar>

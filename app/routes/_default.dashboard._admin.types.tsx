@@ -8,7 +8,7 @@ import DataTable from "~/components/table/DataTable";
 
 import { useOutletContext } from "@remix-run/react";
 
-import type { Type } from "./_default.dashboard";
+import type { Type } from "./_default.dashboard._admin";
 import type { Sort, Filter } from "~/lib/types";
 
 const updateAtom = atom(false);

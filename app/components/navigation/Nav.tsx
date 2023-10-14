@@ -25,7 +25,7 @@ const navigation: Navigation[] = [
   },
   {
     name: "Dashboard",
-    href: "/dashboard/attachments",
+    href: "/dashboard",
   },
   {
     name: "Create",

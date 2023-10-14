@@ -34,7 +34,7 @@ export default function Login() {
         <Link
           to="/"
           className={cn(
-            "p-2 m-2 flex flex-row gap-x-2 items-center text-gray-700 hover:text-gray-900",
+            "p-2 m-2 flex flex-row gap-x-2 items-center text-gray-700 hover:text-gray-900 rounded-md",
             focusStyles
           )}
         >
@@ -54,7 +54,7 @@ export default function Login() {
                 <Link
                   to="#"
                   className={cn(
-                    "font-semibold text-blue-600 hover:text-blue-500",
+                    "font-semibold text-blue-600 hover:text-blue-500 rounded-md",
                     focusStyles
                   )}
                 >
@@ -115,7 +115,7 @@ export default function Login() {
                       <Link
                         to="#"
                         className={cn(
-                          "font-semibold text-blue-600 hover:text-blue-500",
+                          "font-semibold text-blue-600 hover:text-blue-500 rounded-md",
                           focusStyles
                         )}
                       >

@@ -9,7 +9,7 @@ import DataTable from "~/components/table/DataTable";
 import { useOutletContext } from "@remix-run/react";
 
 import type { Type } from "./_default.dashboard";
-import type { Sort } from "~/lib/types";
+import type { Sort, Filter } from "~/lib/types";
 
 const updateAtom = atom(false);
 const insertAtom = atom(false);
@@ -17,6 +17,8 @@ export const itemIdAtom = atom<number | null>(null);
 
 const sortingAtom = atom<Array<Sort>>([]);
 const sortableColumns = ["name", "type"];
+const filteringAtom = atom<Array<Filter>>([]);
+const filterableColumns = ["name", "type", "model"];
 
 export default function Page() {
   const { types } = useOutletContext<{
@@ -43,9 +45,16 @@ export default function Page() {
         insertAtom={insertAtom}
         sortingAtom={sortingAtom}
         sortableColumns={sortableColumns}
+        filteringAtom={filteringAtom}
+        filterableColumns={filterableColumns}
       />
       <div className="pt-10">
-        <DataTable sortingAtom={sortingAtom} columns={columns} data={types} />
+        <DataTable
+          sortingAtom={sortingAtom}
+          filteringAtom={filteringAtom}
+          columns={columns}
+          data={types}
+        />
       </div>
       <Sidebar
         state={insertAtom}

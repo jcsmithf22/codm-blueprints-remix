@@ -10,7 +10,7 @@ import { useOutletContext } from "@remix-run/react";
 
 import type { Attachment, Model, Type } from "./_default.dashboard";
 import type { Database } from "~/types/supabase";
-import type { Sort } from "~/lib/types";
+import type { Sort, Filter } from "~/lib/types";
 
 export type SingleAttachment =
   Database["public"]["Tables"]["attachments"]["Row"];
@@ -21,6 +21,8 @@ export const itemIdAtom = atom<number | null>(null);
 
 const sortingAtom = atom<Array<Sort>>([]);
 const sortableColumns = ["name", "type", "model"];
+const filteringAtom = atom<Array<Filter>>([]);
+const filterableColumns = ["name", "type", "model", "characteristics"];
 
 export default function Page() {
   const { attachments, models, types } = useOutletContext<{
@@ -49,10 +51,13 @@ export default function Page() {
         insertAtom={insertAtom}
         sortingAtom={sortingAtom}
         sortableColumns={sortableColumns}
+        filteringAtom={filteringAtom}
+        filterableColumns={filterableColumns}
       />
       <div className="pt-10">
         <DataTable
           sortingAtom={sortingAtom}
+          filteringAtom={filteringAtom}
           columns={columns}
           data={attachments}
         />

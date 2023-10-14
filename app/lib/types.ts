@@ -26,6 +26,11 @@ export type Sort = {
   desc: boolean;
 };
 
+export type Filter = {
+  id: string;
+  value: unknown;
+};
+
 export type Error = {
   name?: string;
   type?: string;

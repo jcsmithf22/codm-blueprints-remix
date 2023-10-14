@@ -16,6 +16,8 @@ import {
   getSortedRowModel,
   useReactTable,
   type SortingState,
+  type ColumnFiltersState,
+  getFilteredRowModel,
 } from "@tanstack/react-table";
 import { type PrimitiveAtom, useAtom } from "jotai";
 
@@ -23,14 +25,17 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   sortingAtom: PrimitiveAtom<SortingState>;
+  filteringAtom: PrimitiveAtom<ColumnFiltersState>;
 }
 
 function DataTableTemplate<TData, TValue>({
   columns,
   data,
   sortingAtom,
+  filteringAtom,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useAtom(sortingAtom);
+  const [columnFilters, setColumnFilters] = useAtom(filteringAtom);
 
   const table = useReactTable({
     data,
@@ -38,8 +43,11 @@ function DataTableTemplate<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
+    onColumnFiltersChange: setColumnFilters,
+    getFilteredRowModel: getFilteredRowModel(),
     state: {
       sorting,
+      columnFilters,
     },
   });
 

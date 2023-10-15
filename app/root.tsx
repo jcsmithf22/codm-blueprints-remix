@@ -12,6 +12,7 @@ import {
 import { createBrowserClient } from "@supabase/auth-helpers-remix";
 import {
   json,
+  type SerializeFrom,
   type LinksFunction,
   type LoaderFunctionArgs,
 } from "@vercel/remix";
@@ -47,6 +48,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       env,
       session,
       user_data,
+      ENV: { VERCEL_ANALYTICS_ID: process.env.VERCEL_ANALYTICS_ID },
     },
     {
       headers: response.headers,
@@ -54,8 +56,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   );
 };
 
+declare global {
+  interface Window {
+    ENV: SerializeFrom<typeof loader>["ENV"];
+  }
+}
+
 export default function App() {
-  const { env, session, user_data } = useLoaderData<typeof loader>();
+  const { env, session, user_data, ENV } = useLoaderData<typeof loader>();
   const { revalidate } = useRevalidator();
   const [supabase] = React.useState(() =>
     createBrowserClient<Database>(env.SUPABASE_URL, env.SUPABASE_ANON_KEY)
@@ -91,6 +99,12 @@ export default function App() {
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
+        {/* 👇 Write the ENV values to the window */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.ENV = ${JSON.stringify(ENV)}`,
+          }}
+        />
       </body>
     </html>
   );

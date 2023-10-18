@@ -34,6 +34,7 @@ export type Filter = {
 export type Error = {
   name?: string;
   type?: string;
+  attachment?: string;
   model?: string;
   server?: PostgrestError;
   request?: string;

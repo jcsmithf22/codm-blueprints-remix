@@ -87,14 +87,14 @@ export default function App() {
   }, [serverAccessToken, supabase, revalidate]);
 
   return (
-    <html lang="en">
+    <html lang="en" className="">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
       </head>
-      <body className="bg-gray-100">
+      <body className="bg-basecolor">
         <Outlet context={{ supabase, session, user_data }} />
         <ScrollRestoration />
         <Scripts />

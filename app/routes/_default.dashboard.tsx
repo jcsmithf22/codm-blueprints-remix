@@ -15,7 +15,7 @@ export default function Layout() {
   return (
     <>
       {/* Static sidebar for desktop */}
-      <div className="hidden fixed top-14 left-0 bottom-0 md:flex md:w-64 md:flex-col flex-shrink-0 bg-white border-r border-r-gray-200 p-5 px-6 z-40">
+      <div className="hidden fixed top-14 left-0 bottom-0 md:flex md:w-64 md:flex-col flex-shrink-0 bg-background border-r p-5 px-6 z-40">
         {/* Sidebar component, swap this element with another sidebar if you like */}
         <div className="">
           <DashboardNavigation admin={admin} />

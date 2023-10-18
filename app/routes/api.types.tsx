@@ -14,8 +14,6 @@ export async function action({ request }: ActionFunctionArgs) {
     type: formData.get("type") as string,
   };
 
-  console.log(data);
-
   const intent = formData.get("intent") as string;
 
   const errors: Error = {};

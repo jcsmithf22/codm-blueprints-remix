@@ -58,7 +58,7 @@ export default function Nav({
   const username = user_data?.username || null;
   const avatar_url = user_data?.avatar_url || BlankProfile;
   return (
-    <nav className="bg-white border-b border-b-gray-200 fixed inset-x-0 top-0 z-50">
+    <nav className="bg-background border-b fixed inset-x-0 top-0 z-50">
       <div className="px-2 sm:px-4">
         <div className="relative h-14 items-center flex justify-between gap-x-4">
           <div className="flex items-center px-2 lg:px-0 flex-shrink-0">
@@ -93,7 +93,7 @@ export default function Nav({
                       {selected && (
                         <motion.div
                           layoutId={id}
-                          className="bg-gray-100 absolute inset-0 -inset-y-1.5"
+                          className="bg-secondary absolute inset-0 -inset-y-1.5"
                           transition={{
                             type: "spring",
                             stiffness: 500,
@@ -204,7 +204,7 @@ export default function Nav({
             ) : (
               <Link
                 to="/auth/login"
-                className="rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                className="rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:bg-secondary hover:text-gray-700"
               >
                 Login
               </Link>

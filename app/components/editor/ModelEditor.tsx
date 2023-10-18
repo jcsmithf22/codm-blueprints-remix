@@ -6,6 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
+import { Label } from "../ui/label";
 import { gunTypes } from "~/lib/types";
 import { cn } from "~/lib/utils";
 
@@ -92,12 +93,7 @@ export default function ModelEditor({
       <input type="hidden" name="id" value={id} />
       <div className="mt-10 flex flex-col gap-y-6">
         <div className="">
-          <label
-            htmlFor="type"
-            className="block text-sm font-medium leading-6 text-gray-900"
-          >
-            Type
-          </label>
+          <Label htmlFor="type">Type</Label>
           <div className="mt-2">
             <Select
               name="type"
@@ -119,12 +115,7 @@ export default function ModelEditor({
         </div>
 
         <div className="">
-          <label
-            className="block text-sm font-medium leading-6 text-gray-900"
-            htmlFor="name"
-          >
-            Name
-          </label>
+          <Label htmlFor="name">Name</Label>
           <div className="mt-2">
             <Input
               name="name"

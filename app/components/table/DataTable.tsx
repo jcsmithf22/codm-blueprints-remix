@@ -52,15 +52,15 @@ function DataTableTemplate<TData, TValue>({
   });
 
   return (
-    <div className="border-b border-b-gray-200 w-full md:w-fit md:min-w-[512px] lg:min-w-[768px]">
+    <div className="border-b w-full md:w-fit md:min-w-[512px] lg:min-w-[768px]">
       <Table>
-        <TableHeader className="bg-white">
+        <TableHeader className="bg-background">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
                 <TableHead
                   key={header.id}
-                  className="h-9 text-xs border-r sticky top-24 bg-white z-20"
+                  className="h-9 text-xs border-r sticky top-24 bg-background z-20"
                 >
                   {header.isPlaceholder
                     ? null
@@ -84,7 +84,7 @@ function DataTableTemplate<TData, TValue>({
                 {row.getVisibleCells().map((cell) => (
                   <TableCell
                     key={cell.id}
-                    className="py-2.5 text-xs bg-gray-50 border-r"
+                    className="py-2.5 text-xs bg-background/50 border-r"
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>

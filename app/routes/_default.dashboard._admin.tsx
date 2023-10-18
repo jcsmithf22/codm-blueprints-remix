@@ -39,7 +39,7 @@ export default function Layout() {
   const { data } = useLoaderData<typeof loader>();
   return (
     <Suspense
-      fallback={<div className="w-full h-full bg-white">Loading...</div>}
+      fallback={<div className="w-full h-full bg-background">Loading...</div>}
     >
       <Await resolve={data}>
         {([models, attachments, types]) => (

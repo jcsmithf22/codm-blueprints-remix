@@ -40,7 +40,7 @@ const Controls = React.memo(
       <div
         className={cn(
           classNames,
-          "border-b border-bg-200 bg-white fixed top-14 left-0 md:left-64 right-0 h-10 flex gap-x-2 items-center px-4 text-gray-700 z-30"
+          "border-b bg-background fixed top-14 left-0 md:left-64 right-0 h-10 flex gap-x-2 items-center px-4 text-gray-700 z-30"
         )}
       >
         <Button

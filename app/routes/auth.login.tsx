@@ -30,7 +30,7 @@ export default function Login() {
   };
 
   return (
-    <div className="h-screen bg-white relative">
+    <div className="h-screen bg-background relative">
       <div className="absolute">
         <Link
           to="/"
@@ -47,10 +47,10 @@ export default function Login() {
         <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
           <div className="mx-auto w-full max-w-sm lg:w-96">
             <div>
-              <h2 className="text-2xl font-bold leading-9 tracking-tight text-gray-900">
+              <h2 className="text-2xl font-semibold leading-9 tracking-tight">
                 Sign in to your account
               </h2>
-              <p className="mt-2 text-sm leading-6 text-gray-500">
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
                 Don't have an account?{" "}
                 <Link
                   to="/auth/signup"
@@ -142,7 +142,7 @@ export default function Login() {
                     <div className="w-full border-t border-gray-200" />
                   </div>
                   <div className="relative flex justify-center text-sm font-medium leading-6">
-                    <span className="bg-white px-6 text-gray-900">
+                    <span className="bg-background px-6 text-gray-900">
                       Or continue with
                     </span>
                   </div>

@@ -3,7 +3,7 @@ import { cn } from "~/lib/utils";
 
 import { Puzzle, Boxes, Sword, Rocket } from "lucide-react";
 import { Link, useLocation } from "@remix-run/react";
-import { motion } from "framer-motion";
+import { LayoutGroup, motion } from "framer-motion";
 
 type Icon = React.ForwardRefExoticComponent<
   Omit<React.SVGProps<SVGSVGElement>, "ref"> & {
@@ -59,55 +59,57 @@ export default function DashboardNavigation({ admin }: { admin?: boolean }) {
   const id = React.useId();
   return (
     <nav className="flex flex-1 flex-col">
-      <ul
-        className="-mx-2 space-y-1 group"
-        onMouseLeave={() => setHoveredNavItem(null)}
-      >
-        {navItems.map(({ name, icon: Icon, href }) => {
-          const selected = pathname === href;
-          return (
-            <li
-              key={name}
-              className="relative"
-              style={{
-                zIndex: hoveredNavItem === name ? 1 : 2,
-              }}
-            >
-              {selected && (
-                <motion.div
-                  layoutId={id}
-                  className="bg-gray-100 absolute inset-0"
-                  transition={{
-                    type: "spring",
-                    stiffness: 500,
-                    damping: 30,
-                  }}
-                  initial={{
-                    borderRadius: "calc(var(--radius) - 2px)",
-                  }}
-                />
-              )}
-              <Link
-                to={href}
-                onMouseEnter={() => setHoveredNavItem(name)}
-                className={cn(
-                  selected ? "text-gray-700" : "text-gray-500",
-                  "group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold relative"
-                )}
+      <LayoutGroup>
+        <ul
+          className="-mx-2 space-y-1 group"
+          onMouseLeave={() => setHoveredNavItem(null)}
+        >
+          {navItems.map(({ name, icon: Icon, href }) => {
+            const selected = pathname === href;
+            return (
+              <li
+                key={name}
+                className="relative"
+                style={{
+                  zIndex: hoveredNavItem === name ? 1 : 2,
+                }}
               >
-                <Icon
+                {selected && (
+                  <motion.div
+                    layoutId={id}
+                    className="bg-secondary absolute inset-0"
+                    transition={{
+                      type: "spring",
+                      stiffness: 500,
+                      damping: 30,
+                    }}
+                    initial={{
+                      borderRadius: "calc(var(--radius) - 2px)",
+                    }}
+                  />
+                )}
+                <Link
+                  to={href}
+                  onMouseEnter={() => setHoveredNavItem(name)}
                   className={cn(
-                    "h-4 w-4 shrink-0",
-                    selected ? "text-gray-700" : "text-gray-500"
+                    selected ? "text-gray-700" : "text-gray-500",
+                    "group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold relative"
                   )}
-                  aria-hidden="true"
-                />
-                {name}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
+                >
+                  <Icon
+                    className={cn(
+                      "h-4 w-4 shrink-0",
+                      selected ? "text-gray-700" : "text-gray-500"
+                    )}
+                    aria-hidden="true"
+                  />
+                  {name}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </LayoutGroup>
     </nav>
   );
 }

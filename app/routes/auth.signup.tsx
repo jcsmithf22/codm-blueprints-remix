@@ -56,10 +56,10 @@ export default function SignUp() {
         <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
           <div className="mx-auto w-full max-w-sm lg:w-96">
             <div>
-              <h2 className="text-2xl font-bold leading-9 tracking-tight text-gray-900">
+              <h2 className="text-2xl font-bold leading-9 tracking-tight">
                 Create your account
               </h2>
-              <p className="mt-2 text-sm leading-6 text-gray-500">
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">
                 Already have an account?{" "}
                 <Link
                   to="/auth/login"
@@ -172,7 +172,7 @@ export default function SignUp() {
                     <div className="w-full border-t border-gray-200" />
                   </div>
                   <div className="relative flex justify-center text-sm font-medium leading-6">
-                    <span className="bg-white px-6 text-gray-900">
+                    <span className="bg-background px-6 text-gray-900">
                       Or continue with
                     </span>
                   </div>

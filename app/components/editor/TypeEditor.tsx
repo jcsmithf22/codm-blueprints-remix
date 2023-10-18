@@ -12,6 +12,7 @@ import { cn } from "~/lib/utils";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { SheetClose } from "../ui/sheet";
+import { Label } from "../ui/label";
 
 import type { Database } from "~/types/supabase";
 import { useFetcher } from "@remix-run/react";
@@ -85,8 +86,6 @@ export default function TypeEditor({
   const success = fetcher.data?.success;
   const pending = fetcher.state !== "idle";
 
-  console.log(error);
-
   React.useEffect(() => {
     if (success) {
       setOpen(false);
@@ -98,12 +97,7 @@ export default function TypeEditor({
       <input type="hidden" name="id" value={id} />
       <div className="mt-10 flex flex-col gap-y-6">
         <div className="">
-          <label
-            htmlFor="type"
-            className="block text-sm font-medium leading-6 text-gray-900"
-          >
-            Type
-          </label>
+          <Label htmlFor="type">Type</Label>
           <div className="mt-2">
             <Select
               name="type"
@@ -125,12 +119,7 @@ export default function TypeEditor({
         </div>
 
         <div className="">
-          <label
-            className="block text-sm font-medium leading-6 text-gray-900"
-            htmlFor="name"
-          >
-            Name
-          </label>
+          <Label htmlFor="name">Name</Label>
           <div className="mt-2">
             <Input
               type="text"

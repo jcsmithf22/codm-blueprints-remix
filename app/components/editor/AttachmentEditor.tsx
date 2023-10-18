@@ -1,21 +1,11 @@
-import { produce } from "immer";
-import { CheckIcon, ChevronsUpDownIcon, RefreshCw } from "lucide-react";
 import React from "react";
+import { SelectTemplate } from "./Select";
+import { produce } from "immer";
+import { RefreshCw } from "lucide-react";
 import { flushSync } from "react-dom";
 import { Button } from "~/components/ui/button";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "~/components/ui/command";
 import { Input } from "~/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "~/components/ui/popover";
+import { Label } from "../ui/label";
 import { cn } from "~/lib/utils";
 
 import { SheetClose } from "../ui/sheet";
@@ -166,38 +156,22 @@ export default function AttachmentEditor({
   const lastCon = formData ? formData.characteristics.cons.length - 1 : -1;
   const lastPro = formData ? formData.characteristics.pros.length - 1 : -1;
 
-  const typeNameIndex = React.useMemo(
+  const modelIndex = React.useMemo(
     () =>
-      types.reduce((acc, type) => {
-        acc[type.name.toLowerCase()] = type;
+      models.reduce((acc, item) => {
+        acc[item.name.toLowerCase()] = item.id;
         return acc;
-      }, {} as { [key: string]: (typeof types)[0] }),
-    [types]
-  );
-
-  const modelNameIndex = React.useMemo(
-    () =>
-      models.reduce((acc, model) => {
-        acc[model.name.toLowerCase()] = model;
-        return acc;
-      }, {} as { [key: string]: (typeof models)[0] }),
+      }, {} as { [key: string]: number }),
     [models]
   );
 
-  const setType = React.useCallback(
-    (value: string) => {
-      const attachmentId = typeNameIndex[value.toLowerCase()]?.id || -1;
-      dispatch({ type: "UpdateType", value: attachmentId });
-    },
-    [typeNameIndex]
-  );
-
-  const setModel = React.useCallback(
-    (value: string) => {
-      const modelId = modelNameIndex[value.toLowerCase()]?.id || -1;
-      dispatch({ type: "UpdateModel", value: modelId });
-    },
-    [modelNameIndex]
+  const typeIndex = React.useMemo(
+    () =>
+      types.reduce((acc, item) => {
+        acc[item.name.toLowerCase()] = item.id;
+        return acc;
+      }, {} as { [key: string]: number }),
+    [types]
   );
 
   return (
@@ -209,7 +183,10 @@ export default function AttachmentEditor({
           <SelectTemplate
             input={formData.model}
             data={models}
-            setInput={setModel}
+            setInput={(value) =>
+              dispatch({ type: "UpdateModel", value: value })
+            }
+            dataIndex={modelIndex}
           />
 
           {error?.model && (
@@ -222,7 +199,9 @@ export default function AttachmentEditor({
           <SelectTemplate
             input={formData.type}
             data={types}
-            setInput={setType}
+            setInput={(value) => dispatch({ type: "UpdateType", value: value })}
+            type="Type"
+            dataIndex={typeIndex}
           />
 
           {error?.type && <p className="text-sm text-red-500">{error.type}</p>}
@@ -234,12 +213,7 @@ export default function AttachmentEditor({
             name="pros"
             value={formData.characteristics.pros}
           />
-          <label
-            className="block text-sm font-medium leading-6 text-gray-900"
-            htmlFor="pro-0"
-          >
-            Pros
-          </label>
+          <Label htmlFor="pro-0">Pros</Label>
           <div className="mt-2">
             {formData.characteristics.pros.map((pro, i) => (
               <div className="flex gap-x-2 mb-2" key={i}>
@@ -302,12 +276,7 @@ export default function AttachmentEditor({
             name="cons"
             value={formData.characteristics.cons}
           />
-          <label
-            className="block text-sm font-medium leading-6 text-gray-900"
-            htmlFor="con-0"
-          >
-            Cons
-          </label>
+          <Label htmlFor="con-0">Cons</Label>
           <div className="mt-2">
             {formData.characteristics.cons.map((con, i) => (
               <div className="flex gap-x-2 mb-2" key={i}>
@@ -408,83 +377,3 @@ export default function AttachmentEditor({
     </fetcher.Form>
   );
 }
-
-const SelectTemplate = React.memo(
-  ({
-    input,
-    data,
-    setInput,
-  }: {
-    input: number;
-    data: Array<Model> | Array<Type>;
-    setInput: (value: string) => void;
-  }) => {
-    const [open, setOpen] = React.useState(false);
-    const value = data.find((item) => item.id === input)?.name;
-    const buttonRef = React.useRef<HTMLButtonElement>(null);
-    const id = React.useId();
-    return (
-      <div className="">
-        <label
-          htmlFor={id}
-          className="block text-sm font-medium leading-6 text-gray-900"
-        >
-          Model
-        </label>
-        <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              ref={buttonRef}
-              id={id}
-              variant="outline"
-              type="button"
-              role="combobox"
-              aria-expanded={open}
-              className="w-full justify-between mt-2"
-            >
-              {value ? value : "Select Model..."}
-              <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent
-            className="p-0"
-            style={{
-              width: buttonRef.current?.getBoundingClientRect().width,
-            }}
-          >
-            <Command>
-              <CommandInput placeholder={`Search ${data.length} models`} />
-              <CommandEmpty>No attachments found.</CommandEmpty>
-              <CommandGroup className="max-h-[232px] overflow-y-scroll">
-                {data.map((item) => (
-                  <CommandItem
-                    key={item.id}
-                    value={item.name}
-                    onSelect={(currentValue) => {
-                      setInput(
-                        currentValue === value?.toLowerCase()
-                          ? ""
-                          : currentValue
-                      );
-                      setOpen(false);
-                    }}
-                  >
-                    <CheckIcon
-                      className={cn(
-                        "mr-2 w-4 h-4",
-                        input === item.id ? "opacity-100" : "opacity-0"
-                      )}
-                    />
-                    {item.name}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </Command>
-          </PopoverContent>
-        </Popover>
-      </div>
-    );
-  }
-);
-
-SelectTemplate.displayName = "SelectTemplate";

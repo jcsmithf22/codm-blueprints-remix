@@ -69,6 +69,51 @@ export async function getAttachments(supabase: SupabaseClient<Database>) {
   return attachments;
 }
 
+export async function getUsersLoadouts(
+  supabase: SupabaseClient<Database>,
+  uuid: string
+) {
+  const { data } = await supabase
+    .from("loadout_ratings")
+    .select("*, loadouts(*)")
+    .eq("loadouts.user", uuid)
+    .throwOnError();
+  return data;
+}
+
+export async function getLoadouts(supabase: SupabaseClient<Database>) {
+  const { data } = await supabase
+    .from("loadout_ratings")
+    .select("*, loadouts(*)")
+    .throwOnError();
+  return data;
+}
+
+export async function getUserProfile(
+  supabase: SupabaseClient<Database>,
+  uuid: string
+) {
+  const { data } = await supabase
+    .from("profiles")
+    .select()
+    .eq("id", uuid)
+    .single()
+    .throwOnError();
+  return data;
+}
+
+export async function getRating(
+  supabase: SupabaseClient<Database>,
+  id: string
+) {
+  const { data } = await supabase
+    .from("loadout_ratings")
+    .select("rating")
+    .eq("id", id)
+    .single();
+  return data;
+}
+
 export async function insertItem<T>(
   supabase: SupabaseClient<Database>,
   table: string,

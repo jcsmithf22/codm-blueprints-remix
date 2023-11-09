@@ -13,6 +13,7 @@ import {
 } from "../ui/dropdown-menu";
 import { motion } from "framer-motion";
 import BlankProfile from "~/assets/blank_profile.avif";
+import Logo from "~/assets/logo.webp";
 
 type Navigation = {
   name: string;
@@ -63,13 +64,7 @@ export default function Nav({
         <div className="relative h-14 items-center flex justify-between gap-x-4">
           <div className="flex items-center px-2 lg:px-0 flex-shrink-0">
             <div className="flex-shrink-0">
-              <img
-                className="h-8 w-auto"
-                src="https://tailwindui.com/img/logos/mark.svg?color=blue&shade=500"
-                width={38}
-                height={32}
-                alt="Your Company"
-              />
+              <img className="h-8 w-auto" src={Logo} alt="Your Company" />
             </div>
             <div className="hidden lg:ml-6 lg:block">
               <ul

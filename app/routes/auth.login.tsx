@@ -4,7 +4,8 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "@radix-ui/react-label";
 import { ArrowLeftIcon } from "lucide-react";
-import LoginImage from "~/assets/winter-gun.avif";
+import LoginImage from "~/assets/creator.webp";
+import Logo from "~/assets/logo.webp";
 import { cn, focusStyles } from "~/lib/utils";
 import type { Database } from "~/types/supabase";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -47,7 +48,8 @@ export default function Login() {
         <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
           <div className="mx-auto w-full max-w-sm lg:w-96">
             <div>
-              <h2 className="text-2xl font-semibold leading-9 tracking-tight">
+              <img className="h-10 w-auto" src={Logo} alt="Your Company" />
+              <h2 className="mt-8 text-2xl font-semibold leading-9 tracking-tight">
                 Sign in to your account
               </h2>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">

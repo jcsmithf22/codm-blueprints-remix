@@ -17,11 +17,13 @@ import { Skeleton } from "./ui/skeleton";
 
 type Loadout = Database["public"]["Tables"]["loadouts"]["Row"];
 type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+
 type LoadoutRating = {
   id: string;
   rating: number;
   loadouts: Loadout | null;
 };
+
 type LoadoutRatingNonNull = {
   id: string;
   rating: number;

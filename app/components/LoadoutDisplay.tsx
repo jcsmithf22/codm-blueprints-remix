@@ -123,7 +123,7 @@ export default function LoadoutDisplay({
       ) : (
         <Card className="w-full md:max-w-2xl mx-auto">
           <CardContent className="pt-6 flex justify-between items-center">
-            No loadouts found. Be the first to create one!
+            No loadouts found. Create your own!
             <Button asChild>
               <Link to="/create">Create</Link>
             </Button>

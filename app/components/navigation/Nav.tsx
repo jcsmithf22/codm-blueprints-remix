@@ -70,7 +70,13 @@ export default function Nav({
           <div className="flex items-center px-2 lg:px-0 flex-shrink-0">
             <div className="flex-shrink-0 relative">
               <Link to="/">
-                <img className="h-8 w-auto" src={Logo} alt="Your Company" />
+                <img
+                  className="h-8 w-auto"
+                  height={32}
+                  width={30.37}
+                  src={Logo}
+                  alt="Your Company"
+                />
               </Link>
             </div>
             <div className="hidden md:ml-6 md:block">

@@ -15,6 +15,7 @@ import {
   type SerializeFrom,
   type LinksFunction,
   type LoaderFunctionArgs,
+  type MetaFunction,
 } from "@vercel/remix";
 import React from "react";
 import type { Database } from "./types/supabase";
@@ -28,6 +29,17 @@ export const links: LinksFunction = () => [
   // ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
   { rel: "stylesheet", href: styles },
 ];
+
+export const meta: MetaFunction = () => {
+  return [
+    { title: "CODM Loadouts" },
+    {
+      name: "description",
+      content:
+        "Welcome to CODM Loadouts, the social media website designed specifically for sharing your favorite Call of Duty Mobile loadouts!",
+    },
+  ];
+};
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const env = {

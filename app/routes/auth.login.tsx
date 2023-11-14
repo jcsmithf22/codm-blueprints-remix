@@ -4,14 +4,19 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "@radix-ui/react-label";
 import { ArrowLeftIcon } from "lucide-react";
-import LoginImage from "~/assets/creator.webp";
+import LoginImage from "~/assets/exploded.webp";
 import Logo from "~/assets/logo.webp";
 import { cn, focusStyles } from "~/lib/utils";
 import type { Database } from "~/types/supabase";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+type Error = {
+  [key: string]: string;
+};
+
 export default function Login() {
   const navigate = useNavigate();
+  const [error, setError] = React.useState<Error>({});
   const { supabase } = useOutletContext<{
     supabase: SupabaseClient<Database>;
   }>();
@@ -26,8 +31,9 @@ export default function Login() {
     const { error } = await supabase.auth.signInWithPassword(formData);
     if (!error) {
       navigate("/");
+      return;
     }
-    console.log(error);
+    setError({ form: error.message });
   };
 
   return (
@@ -113,7 +119,16 @@ export default function Login() {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-end">
+                  {error.form && (
+                    <p
+                      className="mt-2 text-sm text-red-600"
+                      id="password-error"
+                    >
+                      {error.form}
+                    </p>
+                  )}
+
+                  {/* <div className="flex items-center justify-end">
                     <div className="text-sm leading-6">
                       <Link
                         to="#"
@@ -125,7 +140,7 @@ export default function Login() {
                         Forgot password?
                       </Link>
                     </div>
-                  </div>
+                  </div> */}
 
                   <div>
                     <Button className="w-full" type="submit">

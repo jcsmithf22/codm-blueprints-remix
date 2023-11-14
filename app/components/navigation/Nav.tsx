@@ -2,9 +2,9 @@ import React from "react";
 import { Link } from "@remix-run/react";
 import type { Session } from "@supabase/supabase-js";
 import { cn } from "~/lib/utils";
-import { Search, X } from "lucide-react";
+// import { Search, X } from "lucide-react";
 import { Button } from "../ui/button";
-import { Input } from "../ui/input";
+// import { Input } from "../ui/input";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -50,7 +50,7 @@ export default function Nav({
   logout: () => Promise<void>;
 }) {
   // const [open, setOpen] = React.useState(false);
-  const [search, setSearch] = React.useState("");
+  // const [search, setSearch] = React.useState("");
   const [hoveredNavItem, setHoveredNavItem] = React.useState<string | null>(
     null
   );
@@ -115,7 +115,7 @@ export default function Nav({
               </ul>
             </div>
           </div>
-          <div className="w-full">
+          {/* <div className="w-full">
             <div className="md:ml-auto md:max-w-md relative">
               <label htmlFor="search" className="sr-only">
                 Search
@@ -143,7 +143,7 @@ export default function Nav({
                 </Button>
               )}
             </div>
-          </div>
+          </div> */}
           <div className="hidden lg:flex justify-end flex-shrink-0">
             {session ? (
               <div className="flex items-center w-fit">
@@ -179,10 +179,10 @@ export default function Nav({
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                      <DropdownMenuItem>Profile</DropdownMenuItem>
+                      {/* <DropdownMenuItem>Profile</DropdownMenuItem>
                       <DropdownMenuItem>Billing</DropdownMenuItem>
                       <DropdownMenuItem>Team</DropdownMenuItem>
-                      <DropdownMenuItem>Subscription</DropdownMenuItem>
+                      <DropdownMenuItem>Subscription</DropdownMenuItem> */}
                       <DropdownMenuItem asChild>
                         <button
                           type="button"

@@ -8,12 +8,19 @@ import LoginImage from "~/assets/exploded.webp";
 import { cn, focusStyles } from "~/lib/utils";
 import type { Database } from "~/types/supabase";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import Logo from "~/assets/logo.webp";
+
+type Error = {
+  [key: string]: string;
+};
 
 export default function SignUp() {
   const navigate = useNavigate();
   const { supabase } = useOutletContext<{
     supabase: SupabaseClient<Database>;
   }>();
+
+  const [error, setError] = React.useState<Error>({});
 
   const [formData, setFormData] = React.useState({
     email: "",
@@ -23,6 +30,7 @@ export default function SignUp() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // add check if email is already in use
     const { error } = await supabase.auth.signUp({
       email: formData.email,
       password: formData.password,
@@ -34,8 +42,9 @@ export default function SignUp() {
     });
     if (!error) {
       navigate("/");
+      return;
     }
-    console.log(error);
+    setError({ form: error.message });
   };
 
   return (
@@ -56,7 +65,8 @@ export default function SignUp() {
         <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
           <div className="mx-auto w-full max-w-sm lg:w-96">
             <div>
-              <h2 className="text-2xl font-bold leading-9 tracking-tight">
+              <img className="h-10 w-auto" src={Logo} alt="Your Company" />
+              <h2 className="mt-8 text-2xl font-bold leading-9 tracking-tight">
                 Create your account
               </h2>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">
@@ -140,6 +150,15 @@ export default function SignUp() {
                       />
                     </div>
                   </div>
+
+                  {error.form && (
+                    <p
+                      className="mt-2 text-sm text-red-600"
+                      id="password-error"
+                    >
+                      {error.form}
+                    </p>
+                  )}
 
                   {/* <div className="flex items-center justify-end">
                     <div className="text-sm leading-6">

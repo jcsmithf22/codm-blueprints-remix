@@ -6,6 +6,7 @@ import { Await, Outlet, useLoaderData } from "@remix-run/react";
 import { defer, type LoaderFunctionArgs } from "@vercel/remix";
 
 import type { Database, Json } from "~/types/supabase";
+import { Loader2 } from "lucide-react";
 export type Model = Database["public"]["Tables"]["models"]["Row"];
 export type Type = Database["public"]["Tables"]["attachment_names"]["Row"];
 export type Attachment = {
@@ -39,7 +40,11 @@ export default function Layout() {
   const { data } = useLoaderData<typeof loader>();
   return (
     <Suspense
-      fallback={<div className="w-full h-full bg-background">Loading...</div>}
+      fallback={
+        <div className="w-full h-full bg-background flex justify-center items-center">
+          <Loader2 className="animate-spin h-12 w-12 stroke-gray-400" />
+        </div>
+      }
     >
       <Await resolve={data}>
         {([models, attachments, types]) => (

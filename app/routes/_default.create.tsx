@@ -137,7 +137,7 @@ export default function Page() {
         {([models, attachments]) => (
           <Form
             method="post"
-            className="pt-14 pb-8 md:pt-[88px] w-full md:max-w-2xl mx-auto animate-in"
+            className="pt-14 md:pb-8 md:pt-[88px] w-full md:max-w-2xl mx-auto animate-in"
           >
             <Card className="rounded-none border-0 border-b md:border md:rounded-lg">
               <CardHeader>

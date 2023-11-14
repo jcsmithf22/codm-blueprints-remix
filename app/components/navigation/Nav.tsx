@@ -13,26 +13,34 @@ import {
 } from "../ui/dropdown-menu";
 import BlankProfile from "~/assets/blank_profile.avif";
 import Logo from "~/assets/logo.webp";
+import MobileMenu from "./MobileMenu";
 
-type Navigation = {
-  name: string;
-  href: string;
+type NavigationItem = {
+  title: string;
+  url: string;
+  id: string;
+  subitems?: NavigationItem[];
 };
 
-const navigation: Navigation[] = [
+const navigation: NavigationItem[] = [
   {
-    name: "Home",
-    href: "/",
+    title: "Home",
+    url: "/",
+    id: "home",
   },
   {
-    name: "Dashboard",
-    href: "/dashboard",
+    title: "Dashboard",
+    url: "/dashboard",
+    id: "dashboard",
   },
   {
-    name: "Create",
-    href: "/create",
+    title: "Create",
+    url: "/create",
+    id: "create",
   },
 ];
+
+// reduce rerenders
 
 export default function Nav({
   pathname,
@@ -60,39 +68,38 @@ export default function Nav({
       <div className="px-2 sm:px-4">
         <div className="relative h-14 items-center flex justify-between gap-x-4">
           <div className="flex items-center px-2 lg:px-0 flex-shrink-0">
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 relative">
               <Link to="/">
                 <img className="h-8 w-auto" src={Logo} alt="Your Company" />
               </Link>
             </div>
-            <div className="hidden lg:ml-6 lg:block">
+            <div className="hidden md:ml-6 md:block">
               <ul
                 className="flex space-x-4"
                 onMouseLeave={() => setHoveredNavItem(null)}
               >
-                {navigation.map(({ name, href }) => {
+                {navigation.map(({ title, url }) => {
                   const selected =
-                    pathname === href ||
-                    (href === "/dashboard" &&
-                      pathname.startsWith("/dashboard"));
+                    pathname === url ||
+                    (url === "/dashboard" && pathname.startsWith("/dashboard"));
 
                   return (
                     <li
-                      key={href}
+                      key={url}
                       className="relative"
                       style={{
-                        zIndex: hoveredNavItem === name ? 1 : 2,
+                        zIndex: hoveredNavItem === title ? 1 : 2,
                       }}
                     >
                       <Link
-                        to={href}
-                        onMouseEnter={() => setHoveredNavItem(name)}
+                        to={url}
+                        onMouseEnter={() => setHoveredNavItem(title)}
                         className={cn(
                           "rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 relative",
                           selected && "text-gray-700 bg-secondary"
                         )}
                       >
-                        {name}
+                        {title}
                       </Link>
                     </li>
                   );
@@ -129,7 +136,7 @@ export default function Nav({
               )}
             </div>
           </div> */}
-          <div className="hidden lg:flex justify-end flex-shrink-0">
+          <div className="flex justify-end flex-shrink-0">
             {session ? (
               <div className="flex items-center w-fit">
                 {/* <Button
@@ -154,12 +161,14 @@ export default function Nav({
                         <span className="absolute -inset-1.5" />
                         <span className="sr-only">Open user menu</span>
                         <img
-                          className="h-8 w-8 rounded-full"
+                          className="hidden md:block h-8 w-8 rounded-full"
                           src={avatar_url}
                           alt=""
                         />
                         {username && (
-                          <p className="pr-3 font-normal text-xs">{username}</p>
+                          <p className="pr-3 pl-3 md:pl-0 font-normal text-xs">
+                            {username}
+                          </p>
                         )}
                       </Button>
                     </DropdownMenuTrigger>
@@ -189,95 +198,10 @@ export default function Nav({
                 Login
               </Link>
             )}
+            <div className="md:hidden w-10">
+              <MobileMenu navigationItems={navigation} />
+            </div>
           </div>
-          {/* <div className="flex lg:hidden relative">
-            <Popover.Root open={open} onOpenChange={setOpen}>
-              <div className="px-1">
-                <Popover.Trigger>
-                  <IconButton size="3" variant="ghost">
-                    <span className="absolute -inset-0.5" />
-                    <span className="sr-only">Open main menu</span>
-                    {open ? (
-                      <Cross1Icon
-                        className="block h-6 w-6"
-                        aria-hidden="true"
-                      />
-                    ) : (
-                      <HamburgerMenuIcon
-                        className="block h-6 w-6"
-                        aria-hidden="true"
-                      />
-                    )}
-                  </IconButton>
-                </Popover.Trigger>
-              </div>
-              <Popover.Content size="3">
-                <div className="space-y-1 px-2 pb-3 pt-2">
-                  <Popover.Close>
-                    <Link
-                      to="/"
-                      className="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
-                    >
-                      Home
-                    </Link>
-                  </Popover.Close>
-                  <Popover.Close>
-                    <Link
-                      to="/dashboard/types"
-                      className="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
-                    >
-                      Types
-                    </Link>
-                  </Popover.Close>
-                  <Popover.Close>
-                    <Link
-                      to="/dashboard/models"
-                      className="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
-                    >
-                      Models
-                    </Link>
-                  </Popover.Close>
-                </div>
-                <div className="border-t border-gray-700 pb-3 pt-4">
-                  <div className="flex items-center px-5">
-                    <div className="flex-shrink-0">
-                      <img
-                        className="h-10 w-10 rounded-full"
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        alt=""
-                      />
-                    </div>
-                    <div className="ml-3">
-                      <div className="text-base font-medium text-white">
-                        Tom Cook
-                      </div>
-                      <div className="text-sm font-medium text-gray-400">
-                        tom@example.com
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      className="relative ml-auto flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                    >
-                      <span className="absolute -inset-1.5" />
-                      <span className="sr-only">View notifications</span>
-                      <BellIcon className="h-6 w-6" aria-hidden="true" />
-                    </button>
-                  </div>
-                  <div className="mt-3 space-y-1 px-2">
-                    <Popover.Close>
-                      <Link
-                        to="/login"
-                        className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                      >
-                        Login
-                      </Link>
-                    </Popover.Close>
-                  </div>
-                </div>
-              </Popover.Content>
-            </Popover.Root>
-          </div> */}
         </div>
       </div>
     </nav>

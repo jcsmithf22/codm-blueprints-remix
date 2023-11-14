@@ -35,8 +35,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     ?.split(",")
     .filter((id) => id !== post);
 
-  console.log(liked);
-
   if (liked) {
     await Promise.all([
       supabase

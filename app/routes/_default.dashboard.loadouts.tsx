@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { useLoaderData, Await, } from "@remix-run/react";
+import { useLoaderData, Await } from "@remix-run/react";
 import { defer, type LoaderFunctionArgs } from "@vercel/remix";
 import { getProtectedSession } from "~/session";
 import {
@@ -13,8 +13,6 @@ import LoadoutDisplay from "~/components/LoadoutDisplay";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const { supabase, response, uuid } = await getProtectedSession(request);
-
-  console.log(uuid);
 
   // change method for getting loadouts.
   // probably pull loadouts and rating seperately

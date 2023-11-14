@@ -58,7 +58,7 @@ export default function DashboardNavigation({ admin }: { admin?: boolean }) {
   return (
     <nav className="flex flex-1 flex-col">
       <ul
-        className="-mx-2 space-y-1 group"
+        className="-mx-3 space-y-1 group"
         onMouseLeave={() => setHoveredNavItem(null)}
       >
         {navItems.map(({ name, icon: Icon, href }) => {
@@ -76,7 +76,7 @@ export default function DashboardNavigation({ admin }: { admin?: boolean }) {
                 onMouseEnter={() => setHoveredNavItem(name)}
                 className={cn(
                   selected ? "text-gray-700 bg-secondary" : "text-gray-500",
-                  "group flex items-center gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold relative"
+                  "group flex items-center gap-x-4 rounded-md p-2 px-3 text-sm leading-6 font-semibold relative"
                 )}
               >
                 <Icon

@@ -28,15 +28,34 @@ export const config = { runtime: "edge" };
 export const links: LinksFunction = () => [
   // ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
   { rel: "stylesheet", href: styles },
+  {
+    rel: "icon",
+    href: "/favicon-32x32.png",
+    type: "image/png",
+  },
+  {
+    rel: "icon",
+    href: "/favicon-16x16.png",
+    type: "image/png",
+  },
+  {
+    rel: "apple-touch-icon",
+    href: "/apple-touch-icon.png",
+    sizes: "180x180",
+  },
+  {
+    rel: "manifest",
+    href: "/site.webmanifest",
+  },
 ];
 
 export const meta: MetaFunction = () => {
   return [
-    { title: "CODM Loadouts" },
+    { title: "CODM Blueprints - Call of Duty Mobile loadout designer" },
     {
       name: "description",
       content:
-        "Welcome to CODM Loadouts, the social media website designed specifically for sharing your favorite Call of Duty Mobile loadouts!",
+        "Welcome to CODM Blueprints, the social media website designed specifically for sharing your favorite Call of Duty Mobile loadouts!",
     },
   ];
 };

@@ -190,7 +190,7 @@ export default function AttachmentEditor({
           />
 
           {error?.model && (
-            <p className="text-sm text-red-500">{error.model}</p>
+            <p className="text-sm mt-2 text-red-500">{error.model}</p>
           )}
         </div>
 
@@ -204,7 +204,9 @@ export default function AttachmentEditor({
             dataIndex={typeIndex}
           />
 
-          {error?.type && <p className="text-sm text-red-500">{error.type}</p>}
+          {error?.type && (
+            <p className="text-sm mt-2 text-red-500">{error.type}</p>
+          )}
         </div>
 
         <div className="">

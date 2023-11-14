@@ -127,7 +127,9 @@ export default function ModelEditor({
               }
             />
           </div>
-          {error?.name && <p className="text-sm text-red-500">{error.name}</p>}
+          {error?.name && (
+            <p className="text-sm mt-2 text-red-500">{error.name}</p>
+          )}
         </div>
       </div>
       {error?.server?.code === errorCodes.PERMISSION && (

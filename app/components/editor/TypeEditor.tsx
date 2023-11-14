@@ -131,9 +131,11 @@ export default function TypeEditor({
               }
             />
           </div>
-          {error?.name && <p className="text-sm text-red-500">{error.name}</p>}
+          {error?.name && (
+            <p className="text-sm text-red-500 mt-2">{error.name}</p>
+          )}
           {error?.server?.code === errorCodes.DUPLICATE && (
-            <p className="text-sm text-red-500">
+            <p className="text-sm text-red-500 mt-2">
               {errorMessages[error.server.code]?.message}
             </p>
           )}

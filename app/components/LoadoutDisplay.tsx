@@ -98,7 +98,7 @@ export default function LoadoutDisplay({
   }
 
   return (
-    <div className="w-full flex flex-col items-center gap-8 sm:py-8 animate-in">
+    <div className="w-full flex flex-col items-center gap-4 sm:gap-8 p-4 sm:p-0 sm:py-8 animate-in">
       {sortedLoadouts.length > 0 ? (
         sortedLoadouts.map((loadout) => {
           const model = modelIndex[loadout.loadouts.model];

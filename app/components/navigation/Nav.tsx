@@ -11,7 +11,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "../ui/dropdown-menu";
-import { motion } from "framer-motion";
 import BlankProfile from "~/assets/blank_profile.avif";
 import Logo from "~/assets/logo.webp";
 
@@ -54,8 +53,6 @@ export default function Nav({
   const [hoveredNavItem, setHoveredNavItem] = React.useState<string | null>(
     null
   );
-  const id = React.useId();
-  // const username = user_data ? user_data.username : null;
   const username = user_data?.username || null;
   const avatar_url = user_data?.avatar_url || BlankProfile;
   return (
@@ -64,7 +61,9 @@ export default function Nav({
         <div className="relative h-14 items-center flex justify-between gap-x-4">
           <div className="flex items-center px-2 lg:px-0 flex-shrink-0">
             <div className="flex-shrink-0">
-              <img className="h-8 w-auto" src={Logo} alt="Your Company" />
+              <Link to="/">
+                <img className="h-8 w-auto" src={Logo} alt="Your Company" />
+              </Link>
             </div>
             <div className="hidden lg:ml-6 lg:block">
               <ul
@@ -85,26 +84,12 @@ export default function Nav({
                         zIndex: hoveredNavItem === name ? 1 : 2,
                       }}
                     >
-                      {selected && (
-                        <motion.div
-                          layoutId={id}
-                          className="bg-secondary absolute inset-0 -inset-y-1.5"
-                          transition={{
-                            type: "spring",
-                            stiffness: 500,
-                            damping: 30,
-                          }}
-                          initial={{
-                            borderRadius: "calc(var(--radius) - 2px)",
-                          }}
-                        />
-                      )}
                       <Link
                         to={href}
                         onMouseEnter={() => setHoveredNavItem(name)}
                         className={cn(
                           "rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 relative",
-                          selected && "text-gray-700"
+                          selected && "text-gray-700 bg-secondary"
                         )}
                       >
                         {name}

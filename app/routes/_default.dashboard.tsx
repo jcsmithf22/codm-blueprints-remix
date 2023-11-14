@@ -35,7 +35,7 @@ function NavContainer({ admin }: { admin: boolean }) {
       )}
     >
       {/* Sidebar component, swap this element with another sidebar if you like */}
-      <div className="ml-1 mb-2 w-full flex justify-end">
+      <div className="ml-1 mb-2 w-full flex justify-end md:hidden">
         <button onClick={() => setExpanded(!expanded)} className="">
           {expanded ? (
             <ChevronLeftCircle

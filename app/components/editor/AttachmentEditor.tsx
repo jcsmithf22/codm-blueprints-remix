@@ -1,7 +1,7 @@
 import React from "react";
 import { SelectTemplate } from "./Select";
 import { produce } from "immer";
-import { RefreshCw } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { flushSync } from "react-dom";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -140,6 +140,7 @@ export default function AttachmentEditor({
 
   const error = fetcher.data?.errors;
   const success = fetcher.data?.success;
+  const intent = (fetcher.formData?.get("intent") as string) || "";
   const pending = fetcher.state !== "idle";
 
   React.useEffect(() => {
@@ -347,11 +348,15 @@ export default function AttachmentEditor({
       >
         {id && (
           <Button
+            className="flex gap-x-2"
             type="submit"
             name="intent"
             value="delete"
             variant="destructive"
           >
+            {pending && intent === "delete" && (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            )}
             Delete
           </Button>
         )}
@@ -371,7 +376,9 @@ export default function AttachmentEditor({
             value={id ? "update" : "insert"}
             type="submit"
           >
-            {pending && <RefreshCw className="h-3.5 w-3.5 animate-spin" />}
+            {pending && ["update", "insert"].includes(intent) && (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            )}
             Submit
           </Button>
         </div>

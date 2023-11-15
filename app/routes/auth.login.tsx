@@ -3,7 +3,7 @@ import { Link, useNavigate, useOutletContext } from "@remix-run/react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "@radix-ui/react-label";
-import { ArrowLeftIcon } from "lucide-react";
+import { ArrowLeftIcon, Loader2 } from "lucide-react";
 import LoginImage from "~/assets/exploded.webp";
 import Logo from "~/assets/logo.webp";
 import { cn, focusStyles } from "~/lib/utils";
@@ -17,6 +17,7 @@ type Error = {
 export default function Login() {
   const navigate = useNavigate();
   const [error, setError] = React.useState<Error>({});
+  const [loading, setLoading] = React.useState(false);
   const { supabase } = useOutletContext<{
     supabase: SupabaseClient<Database>;
   }>();
@@ -28,7 +29,9 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
     const { error } = await supabase.auth.signInWithPassword(formData);
+    setLoading(false);
     if (!error) {
       navigate("/");
       return;
@@ -144,6 +147,9 @@ export default function Login() {
 
                   <div>
                     <Button className="w-full" type="submit">
+                      {loading && (
+                        <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                      )}
                       Sign in
                     </Button>
                   </div>

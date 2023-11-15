@@ -18,7 +18,7 @@ import type { Database } from "~/types/supabase";
 import { useFetcher } from "@remix-run/react";
 import type { Error } from "~/lib/types";
 import type { SetStateAction } from "jotai";
-import { RefreshCw } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 type Model = Database["public"]["Tables"]["models"]["Insert"];
 
@@ -80,6 +80,7 @@ export default function ModelEditor({
 
   const error = fetcher.data?.errors;
   const success = fetcher.data?.success;
+  const intent = (fetcher.formData?.get("intent") as string) || "";
   const pending = fetcher.state !== "idle";
 
   React.useEffect(() => {
@@ -145,11 +146,15 @@ export default function ModelEditor({
       >
         {id && (
           <Button
+            className="flex gap-x-2"
             type="submit"
             name="intent"
             value="delete"
             variant="destructive"
           >
+            {pending && intent === "delete" && (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            )}
             Delete
           </Button>
         )}
@@ -169,7 +174,9 @@ export default function ModelEditor({
             value={id ? "update" : "insert"}
             type="submit"
           >
-            {pending && <RefreshCw className="h-3.5 w-3.5 animate-spin" />}
+            {pending && ["update", "insert"].includes(intent) && (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            )}
             Submit
           </Button>
         </div>

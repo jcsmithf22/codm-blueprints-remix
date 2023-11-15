@@ -17,7 +17,7 @@ import { Label } from "../ui/label";
 import type { Database } from "~/types/supabase";
 import { useFetcher } from "@remix-run/react";
 import type { SetStateAction } from "jotai";
-import { RefreshCw } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 type Type = Database["public"]["Tables"]["attachment_names"]["Insert"];
 
@@ -84,6 +84,7 @@ export default function TypeEditor({
 
   const error = fetcher.data?.errors;
   const success = fetcher.data?.success;
+  const intent = (fetcher.formData?.get("intent") as string) || "";
   const pending = fetcher.state !== "idle";
 
   React.useEffect(() => {
@@ -154,11 +155,15 @@ export default function TypeEditor({
       >
         {id && (
           <Button
+            className="flex gap-x-2"
             type="submit"
             name="intent"
             value="delete"
             variant="destructive"
           >
+            {pending && intent === "delete" && (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            )}
             Delete
           </Button>
         )}
@@ -178,7 +183,9 @@ export default function TypeEditor({
             value={id ? "update" : "insert"}
             type="submit"
           >
-            {pending && <RefreshCw className="h-3.5 w-3.5 animate-spin" />}
+            {pending && ["update", "insert"].includes(intent) && (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            )}
             Submit
           </Button>
         </div>
